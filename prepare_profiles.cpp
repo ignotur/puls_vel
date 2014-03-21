@@ -184,92 +184,154 @@ res = (theta/R) * (R0 * cos(l) - D) - theta*cos(l);
 return res;
 }
 
-double prob_vl (double * entry_dist, double * entry_prmot, double vl)	{
-double res;
-double D, Dmin, Dmax;
-double fl, fr, h;
-double mu_c, mu_s;
+//-------------------------------------------------------------------------
+// The main function of the program - calculates integral eq. (1)
+// from the article by Brisken et al. (2003) (taking into account
+// correction D*cos(b)) for particular velocity vl.
+// It was tested for velocities more than 40 km/s
+// The integrator analyze P(mu_l) profile of probability density function
+// which is usually much sharper than P(D).
+//--------------------------------------------------------------------------
 
-mu_c = entry_prmot[0];
-mu_s = entry_prmot[1];
+
+double prob_vl (double * entry_dist, double * entry_prmot, double vl)	{
+double mu_c, mu_s;
+double x_left, x_right;
+double h_init, h;
+double sum, x, x_next, eps;
+double k1, k2, k3, k4;
+double h_D, h_D_next;
+double Dmin, Dmax, D_next;
+double D, fl, fr;
+double D_prev, b;
+int emergence;
+
+mu_c    = entry_prmot[0];
+mu_s    = entry_prmot[1];
+
+b       = entry_dist[9]/180.*pi; 
+
+x_left  = mu_c - 3*mu_s;  // value of P(mu_l) is much larger 
+x_right = mu_c + 3*mu_s;  // than 0 only from -3 to 3
+
+eps = 1./(95.*5.+1.);     // this value is a result of modelling
+
+h_init = 6*mu_s/20.;
+x = mu_c + mu_s*3; 
+h = h_init;
+
+sum = 0.;
+
+
+h=0.1;
 
 Dmin = 2.5;
+emergence=0;
 
-	do {
+// Here we search for Dmin (distance from which
+// we are going to integrate)
 
+do {
 	D = Dmin;	
 	fl = f(&entry_dist[0], mu_c - 3*mu_s, D, vl);
-	fr = f(&entry_dist[0], mu_c - 3*mu_s, D+0.1, vl);
-	h = 0.1;
-	Dmin = D - h * fl / (fr-fl);
+	fr = f(&entry_dist[0], mu_c - 3*mu_s, D+h, vl);
+	if (D-h*fl/(fr-fl) <= 0.)	
+		Dmin/=2;		
+	else
+		Dmin = D - 0.1 * fl / (fr-fl);
 
-//	cout<<Dmin<<endl;
+	emergence++;
 
-	} while (abs(f(&entry_dist[0], mu_c - 3*mu_s, Dmin, vl))> 0.0001);
+		if (emergence>100)	{
+			cout<<"Conditions for Dmin are not satisfied!"<<endl;
+			exit(3);
+		}
 
-	cout << "Dmin is "<<Dmin<<endl;
+} while (abs(f(&entry_dist[0], mu_c - 3*mu_s, Dmin, vl))> 0.0001);
 
 Dmax = 2.5;
+emergence=0;
 
-	do {
+// Here we search for Dmax (distance until that
+// we are going to integrate)
+
+do {
 
 	D = Dmax;	
 	fl = f(&entry_dist[0], mu_c + 3*mu_s, D, vl);
 	fr = f(&entry_dist[0], mu_c + 3*mu_s, D+0.1, vl);
-	h = 0.1;
-	Dmax = D - h * fl / (fr-fl);
 
-//	cout<<Dmax<<endl;
+	if (D-h*fl/(fr-fl) <= 0.)	{
+		Dmax/=2;		}
+	else
+		Dmax = D - 0.1 * fl / (fr-fl);
+	
+	emergence++;
 
-	} while (abs(f(&entry_dist[0], mu_c + 3*mu_s, Dmax, vl))> 0.0001);
+		if (emergence>100)	{
+			cout<<"Conditions for Dmin are not satisfied!"<<endl;
+			exit(4);
+		}
 
-	cout << "Dmax is "<<Dmax<<endl;
 
-double sum; 
-int counter;
+} while (abs(f(&entry_dist[0], mu_c + 3*mu_s, Dmax, vl))> 0.0001);
 
-sum = 0.;
+	D = Dmax;
+	
+	// So, starting integration process.
+	// The step is adaptive and its value dependes on derivative
+	// This integrator has two different steps. One - h is actual step
+	// for sharpest function P(mu_l), which we do not need because
+	// we integrate on distance, not proper motion.
+	// So, based on h we calculate h_D
 
-counter=0;
-
-x_left  = Dmax;
-x_right = Dmin;
-
-eps=0.018;
-
-h_init = (Dmin-Dmax)/20.;
-x = Dmax; 
-h = h_init;
 	do {
-		
-		h = eps * h / abs(pdf_prmot(x, mu_c, mu_s) - pdf_prmot(x+h, mu_c, mu_s));
+		h = eps * h / abs(pdf_prmot(x, mu_c, mu_s) - pdf_prmot(x-h, mu_c, mu_s));
 		if (h > 6.*mu_s/5.)
 			h = 6*mu_s/5.;
-		if (h + x > x_right)
-			h = x_right - x;
-		x_next = x + h;
-		k1 = h * pdf_prmot(x, mu_c, mu_s);
-		k2 = h * pdf_prmot(x+h/4., mu_c, mu_s);
-		k3 = h * pdf_prmot(x+3.*h/4., mu_c, mu_s);
-		k4 = h * pdf_prmot(x+h, mu_c, mu_s);
+		if (x-h < x_left)
+			h = x - x_left;
+		x_next = x - h;
+		
+		// Compute h_D by means on Newton algorithm
+		
+		D_prev = D;
+
+		do {
+			D_next = D;
+			fl = f(&entry_dist[0], x_next, D_next, vl);
+			fr = f(&entry_dist[0], x_next, D_next+0.1, vl);
+			D = D_next - 0.1 * fl/(fr-fl);
+		} while (abs(f(&entry_dist[0], x_next, D, vl))> 0.001);	
+	
+		h_D = D - D_prev;	
+
+		// Some kind of Runge-Kutta method (?) for P(D)*P(mu_l) 
+
+		k1 = h_D * pdf_prmot(x, mu_c, mu_s)         *  pdf_dist(&entry_dist[0], D);
+		k2 = h_D * pdf_prmot(x+h/4., mu_c, mu_s)    *  pdf_dist(&entry_dist[0], D + h_D/4.);
+		k3 = h_D * pdf_prmot(x+3.*h/4., mu_c, mu_s) *  pdf_dist(&entry_dist[0], D + 3.*h_D/4.);
+		k4 = h_D * pdf_prmot(x+h, mu_c, mu_s)       *  pdf_dist(&entry_dist[0], D + h_D);
 		sum += (k1 + 2*k2 + 2*k3 + k4) / 6.;
 		counter++;
-	
-//		cout<<counter<<"\t"<<x<<"\t"<<x_next<<"\t"<<h<<"\t"<<sum<<endl;
+
 		x = x_next;
 
-	} while (x<x_right);
+	} while (x>x_left);
 
-
+res = sum;
 return res;
 }
+
+
+
 
 double f(double * dist, double mu, double D, double vl)	{
 double res, b;
 
 b = dist[9]/180.*pi;
 
-res = (vl + delta_vl(dist, D))/(D*cos(b))*9.51e5/206265. - mu;
+res = (vl + delta_vl(dist, D))/(D*cos(b))/9.51e5*206265. - mu;
 
 return res;
 }
