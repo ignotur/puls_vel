@@ -241,6 +241,7 @@ h_init = (Dmin-Dmax)/20.;
 x = Dmax; 
 h = h_init;
 	do {
+		
 		h = eps * h / abs(pdf_prmot(x, mu_c, mu_s) - pdf_prmot(x+h, mu_c, mu_s));
 		if (h > 6.*mu_s/5.)
 			h = 6*mu_s/5.;
