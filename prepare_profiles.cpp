@@ -14,10 +14,10 @@ void dmdsm_ (double *l, double *b, int *ndir, double *dmpsr, double *dist, char 
 }
 
 void profile  (double * dist, double * prmot, double * res);
-void pdf_dist (double *, double);
-void pdf_prmot(double, double, double);
+double pdf_dist (double *, double);
+double pdf_prmot(double, double, double);
 double delta_vl (double *, double);
-double prob_vl  (...);
+double prob_vl (double *, double *, double);	
 double f(double *, double, double, double);
 
 int main (int argv, char * argc[]) 	{
@@ -27,7 +27,7 @@ ifstream in_prmot (argc[2]);
 
 ofstream out_prof;
 
-double dist[10][1000], prmot[6][1000], profile[1000];
+double dist[10][1000], prmot[6][1000], res[1000];
 double entry_prmot[3], entry_dist[3]; 
 double trash;
 int n_dist, n_prmot;
@@ -123,7 +123,7 @@ return res;
 // otherwise use TC93 model of electron density
 //----------------------------------------------------------- 
 
-double prf_dist (double * dist, double D)	{
+double pdf_dist (double * dist, double D)	{
 double res, parallax;
 double DM1, DM2;
 double sm, smtau, smtheta;
@@ -136,7 +136,7 @@ z = 1.77;
 
 	if (dist[1] != -1)  		{	// We base on the analytical form of the Gaussian
 		parallax = 1./D;
-		res = 1./(dist[1]*sqrt(pi*2)) * exp (-pow(parralax - dist[0], 2)/(2.*pow(dist[1], 2.))) 
+		res = 1./(dist[1]*sqrt(pi*2)) * exp (-pow(parallax - dist[0], 2)/(2.*pow(dist[1], 2.))); 
 	}
 	else		{	// We find appropriate for D DM and then compare it with the actual DM 
 		l = dist[8]/180.*pi;
@@ -145,10 +145,10 @@ z = 1.77;
 		dist2 = D;
 		Dcompar = z / sin(b);
 		dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta);	
-		if (D_compar > D)	{
+		if (Dcompar > D)	{
 			D = Dcompar;
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
-			if (limit != ">")	{			
+			if (limit != '>')	{			
 				cout<<"Something went wrong!!!"<<endl;
 				cout<<"Exactly: D is "<< D <<", Dcompar is "<<Dcompar<<endl;
 				cout<<"limit is "<<limit<<", and DM2 is "<<DM2<<endl;
@@ -195,6 +195,7 @@ return res;
 
 
 double prob_vl (double * entry_dist, double * entry_prmot, double vl)	{
+double res;
 double mu_c, mu_s;
 double x_left, x_right;
 double h_init, h;
@@ -313,7 +314,7 @@ do {
 		k3 = h_D * pdf_prmot(x+3.*h/4., mu_c, mu_s) *  pdf_dist(&entry_dist[0], D + 3.*h_D/4.);
 		k4 = h_D * pdf_prmot(x+h, mu_c, mu_s)       *  pdf_dist(&entry_dist[0], D + h_D);
 		sum += (k1 + 2*k2 + 2*k3 + k4) / 6.;
-		counter++;
+//		counter++;
 
 		x = x_next;
 
@@ -335,3 +336,17 @@ res = (vl + delta_vl(dist, D))/(D*cos(b))/9.51e5*206265. - mu;
 
 return res;
 }
+
+//----------------------------------------------------------------------
+// This function should call prob_vl multiple times and keep result
+// in the massive res. As far as all calls are finished it should
+// normalize result profile.
+//----------------------------------------------------------------------
+
+
+void profile(double * entry_dist, double * entry_prmot, double * res)	{
+
+	for (int i=40; i < 1000; i++)	
+		res[i] = prob_vl (entry_dist, entry_prmot, i);	
+
+}	
