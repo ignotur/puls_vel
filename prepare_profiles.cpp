@@ -55,7 +55,7 @@ n_dist--;
 
 	do {
 		for (int i=0; i < 6; i++)
-			in_prmot >> dist[i][n_prmot];
+			in_prmot >> prmot[i][n_prmot];
 			//--------------------------------------------------------
 			// first value mu_l, then err_mu_l, err_mu_l
 			// then mu_b, err_mu_b, err_mu_b
@@ -68,6 +68,8 @@ n_prmot--;
 		cout<<"List sizes are incompatible!"<<endl;
 		return 0;
 	}
+	else 
+		cout<<"Data have been read"<<endl;
 	
 // The main loop. Calculate profiles for pulsars one by one.
 
@@ -77,7 +79,9 @@ n_prmot--;
 			entry_dist [j] = dist [j][i];
 		for (int j=0; j < 6; j++)	
 			entry_prmot[j] = prmot[j][i];	
-
+		
+		cout<<"Working on profile -- "<<i<<endl;	
+	
 		profile(&entry_dist[0], &entry_prmot[0], &res[0]);	 // Call a function to compute profile	
 	
 		// Open file with appropriate name
@@ -91,7 +95,7 @@ n_prmot--;
 		cout << basic_name <<endl;
 		out_prof.open(basic_name);
 
-		for (int j=0; j < 1000; j++)
+		for (int j=40; j < 1000; j++)
 			out_prof << j+1 << "\t" << res[j] <<endl;	// profile writing 
 
 		out_prof.close();
@@ -145,7 +149,11 @@ z = 1.77;
 		dist2 = D;
 		Dcompar = z / sin(b);
 		dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta);	
-		if (Dcompar > D)	{
+
+//	cout<<"dist1 -- " <<dist1<<", DM1 -- "<< DM1 <<endl;
+//	cout<<"Dcompar --"<<Dcompar<<endl;
+
+		if (Dcompar < D)	{
 			D = Dcompar;
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 			if (limit != '>')	{			
@@ -231,6 +239,8 @@ emergence=0;
 
 // Here we search for Dmin (distance from which
 // we are going to integrate)
+
+cout<<"vl -- "<<vl<<endl;
 
 do {
 	D = Dmin;	
