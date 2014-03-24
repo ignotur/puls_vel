@@ -13,7 +13,7 @@ double const pi = 3.1415926;
 
 int main () {
 
-double mu_c = 16, mu_s = 1.8;
+double mu_c = abs(-37.2), mu_s = 0.7;
 double entry_dist[10];
 double x_left, x_right;
 double h_init, h;
@@ -48,10 +48,10 @@ D = Dmin;
 vl = 2.*i;
 // Let's find first Dmin, Dmax
 
-entry_dist[0] = 1.82;
+entry_dist[0] = 2.15;
 entry_dist[1] = 0.4;
-entry_dist[8] = 116.5;
-entry_dist[9] = -14.6;
+entry_dist[8] = 236.952;
+entry_dist[9] = -16.758;
 
 b = entry_dist[9]/180.*pi;
 

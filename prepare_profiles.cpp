@@ -78,7 +78,7 @@ n_prmot--;
 		for (int j=0; j < 10; j++)		
 			entry_dist [j] = dist [j][i];
 		for (int j=0; j < 6; j++)	
-			entry_prmot[j] = prmot[j][i];	
+			entry_prmot[j] = abs(prmot[j][i]);	
 		
 		cout<<"Working on profile -- "<<i<<endl;	
 	
@@ -355,8 +355,17 @@ return res;
 
 
 void profile(double * entry_dist, double * entry_prmot, double * res)	{
+double sum;
 
-	for (int i=40; i < 1000; i++)	
-		res[i] = prob_vl (entry_dist, entry_prmot, i);	
+sum = 0;
 
+	for (int i=40; i < 1000; i++)				{	
+		res[i] = prob_vl (entry_dist, entry_prmot, i);
+		sum += res[i];
+	}	
+	
+	// Here we normalise the profile
+
+	for (int i=40; i < 1000; i++)
+		res[i] /= sum;
 }	
