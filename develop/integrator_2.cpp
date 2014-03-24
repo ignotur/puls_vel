@@ -13,7 +13,7 @@ double const pi = 3.1415926;
 
 int main () {
 
-double mu_c = abs(-37.2), mu_s = 0.7;
+double mu_c = abs(-2.92), mu_s = 5.6;
 double entry_dist[10];
 double x_left, x_right;
 double h_init, h;
@@ -26,13 +26,17 @@ double vl, b;
 double D_prev;
 int counter;
 
-for (int i=20; i < 500; i++)	{
+//for (int i=20; i < 500; i++)	{
 
 sum = 0.;
 
 counter=0;
 
 x_left  = mu_c - 3*mu_s;
+
+	if (x_left < 0.)
+		x_left = 0.;
+
 x_right = mu_c + 3*mu_s;
 
 
@@ -45,13 +49,13 @@ h_init = 6*mu_s/20.;
 x = mu_c + mu_s*3; 
 h = h_init;
 D = Dmin;
-vl = 2.*i;
+vl = 40.;
 // Let's find first Dmin, Dmax
 
-entry_dist[0] = 2.15;
+entry_dist[0] = 3.72;
 entry_dist[1] = 0.4;
-entry_dist[8] = 236.952;
-entry_dist[9] = -16.758;
+entry_dist[8] = 234.5;
+entry_dist[9] = 7.22;
 
 b = entry_dist[9]/180.*pi;
 
@@ -63,15 +67,23 @@ int emergence=0;
 
 	do {
 
-	D = Dmin;	
+	D = Dmin;
+	cout<< entry_dist[0]<<endl;	
 	fl = f(&entry_dist[0], mu_c - 3*mu_s, D, vl);
 	fr = f(&entry_dist[0], mu_c - 3*mu_s, D+h, vl);
+
+        cout<<entry_dist[8]<<"\t"<<entry_dist[9]<<endl;
+	cout<<fl<<"\t"<<fr<<endl;
+	cout<<vl<<"\t"<<D<<endl;
+	cout<<"Here mu_c, mu_s -- "<<mu_c<<"\t"<<mu_s<<endl;
 //	h = 0.1;
 	if (D-h*fl/(fr-fl) <= 0.)	{
 //		h*=2.;
 		Dmin/=2;		}
 	else
 		Dmin = D - 0.1 * fl / (fr-fl);
+
+	cout<< Dmin<<endl;
 
 	emergence++;
 	if (emergence>100)	{
@@ -162,10 +174,10 @@ emergence=0;
 //if (counter<10)
 //	cout<<"Too small number of steps!"<<endl;
 //cout<<eps<<"\t"<<counter<<"\t"<<abs(sum - erf(3))<<endl;
-	cout<<i<<"\t"<<sum<<endl;
+//	cout<<i<<"\t"<<sum<<endl;
 
 //cout<<erf(-3)<<"\t"<<erf(3)<<endl;
-}
+//}
 return 0;
 }
 
