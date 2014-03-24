@@ -18,6 +18,7 @@ double pdf_dist (double *, double);
 double pdf_prmot(double, double, double);
 double delta_vl (double *, double);
 double prob_vl (double *, double *, double);	
+double prob_vl_special (double *, double *, double);
 double f(double *, double, double, double);
 
 int main (int argv, char * argc[]) 	{
@@ -28,7 +29,7 @@ ifstream in_prmot (argc[2]);
 ofstream out_prof;
 
 double dist[10][1000], prmot[6][1000], res[1000];
-double entry_prmot[3], entry_dist[3]; 
+double entry_prmot[6], entry_dist[10]; 
 double trash;
 int n_dist, n_prmot;
 n_dist  = 0;
@@ -154,19 +155,22 @@ z = 1.77;
 //	cout<<"Dcompar --"<<Dcompar<<endl;
 
 		if (Dcompar < D)	{
-			D = Dcompar;
+//			D = Dcompar;
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
-			if (limit != '>')	{			
-				cout<<"Something went wrong!!!"<<endl;
-				cout<<"Exactly: D is "<< D <<", Dcompar is "<<Dcompar<<endl;
-				cout<<"limit is "<<limit<<", and DM2 is "<<DM2<<endl;
-				exit(2);
-			}
+//			if (limit != '>')	{			
+//				cout<<"Something went wrong!!!"<<endl;
+//				cout<<"Exactly: D is "<< D <<", Dcompar is "<<Dcompar<<endl;
+//				cout<<"limit is "<<limit<<", and DM2 is "<<DM2<<endl;
+//				exit(2);
+//			}
 		}
 		else
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 
 		res = 1./(30.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(30., 2.)));
+		
+		if (D*cos(b)>10.)
+			res = 0.;
 	
 	}
 
@@ -377,13 +381,88 @@ double sum;
 
 sum = 0;
 
-	for (int i=40; i < 1000; i++)				{	
-		res[i] = prob_vl (entry_dist, entry_prmot, i);
-		sum += res[i];
+//	for (int i=40; i < 1000; i++)				{	
+//		res[i] = prob_vl (entry_dist, entry_prmot, i);
+//		sum += res[i];
+//	}	
+
+	if (entry_prmot[0] - 3.*entry_prmot[1] < 0.)		{
+		cout << "We use standard (slow) scheme here."<<endl;
+		for (int i=0; i < 1000; i++)				{	
+			if (i==0 || res[i-1] > (sum / 1e6))	{
+				res[i] = prob_vl_special (entry_dist, entry_prmot, i);
+				sum += res[i];
+			}
+			else
+				res[i] = 0;
+		}
+	}
+	else							{
+		cout << "We use fast scheme here."<<endl;
+		for (int i=40; i < 1000; i++)				{
+			if (i==40 || res[i-1] > sum / 1e6)	{
+				res[i] = prob_vl (entry_dist, entry_prmot, i);
+				sum += res[i];
+			}
+			else
+				res[i] = 0;
+		}
 	}	
+
 	
 	// Here we normalise the profile
 
 	for (int i=40; i < 1000; i++)
 		res[i] /= sum;
-}	
+}
+
+//----------------------------------------------------------------------
+// This is a spetial case for our integration procedure when we have 
+// proper motion which is extremely small and less than its error.
+// In this case we intend to integrate the profile as it is with
+// some high-order numerical scheme.
+//----------------------------------------------------------------------
+double prob_vl_special (double * entry_dist, double * entry_prmot, double vl)	{
+double sum;
+double h, prob_c;
+double b, mu_c, mu_s, lf, lc, lr, D;
+
+sum = 0;
+h   = 0.03;
+
+	if (((int)vl)%10==0)
+		cout<<"vl -- "<<vl<<endl;
+
+
+b = entry_dist[9] * pi / 180.;
+mu_c = entry_prmot[0];
+mu_s = entry_prmot[1];
+
+	// Let us check first should we integrate at all? It may happen 
+	// that the PDF for proper motions is too small (say less than 1e-6 or 1e-7)
+
+//	if (entry_dist[1] != -1)
+//		D = entry_dist[0];
+//	else
+//		D = 1./entry_dist[0];
+
+
+//	prob_c = pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D * cos(b))      * 206265/9.51e5, mu_c, mu_s );
+
+//	if (prob_c < 1e-12)	{
+//		return 0;
+//	}
+
+
+
+	for (int i=1; i < 460; i++)	{
+//cout<<i<<endl;
+		D = (double) i * h;
+		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D * cos(b))      * 206265/9.51e5, mu_c, mu_s ); 
+		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h)*cos(b)) * 206265/9.51e5, mu_c, mu_s );
+		lr = h * pdf_dist(entry_dist, D + 1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h)*cos(b)) * 206265/9.51e5, mu_c, mu_s );
+		sum += (lf + 4 * lc + lr) / 6.;
+	}
+
+return sum;
+}		
