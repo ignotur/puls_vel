@@ -210,7 +210,8 @@ double h_init, h;
 double sum, x, x_next, eps;
 double k1, k2, k3, k4;
 double h_D, h_D_next;
-double Dmin, Dmax, D_next;
+double Dmin, Dmax, D_next, Dinter;
+double prob_l, prob_c, prob_r;
 double D, fl, fr;
 double D_prev, b;
 int emergence;
@@ -240,7 +241,8 @@ emergence=0;
 // Here we search for Dmin (distance from which
 // we are going to integrate)
 
-cout<<"vl -- "<<vl<<endl;
+	if (((int)vl)%10==0)
+		cout<<"vl -- "<<vl<<endl;
 
 do {
 	D = Dmin;	
@@ -295,6 +297,22 @@ do {
 	// for sharpest function P(mu_l), which we do not need because
 	// we integrate on distance, not proper motion.
 	// So, based on h we calculate h_D
+
+
+	// Let us check first should we integrate at all? It may happen 
+	// that the PDF for distances is too small (say less than 1e-6 or 1e-7)
+
+	Dinter = (Dmax + Dmin) / 2.;
+	
+	prob_l = pdf_dist(&entry_dist[0], Dmin);
+	prob_c = pdf_dist(&entry_dist[0], Dinter);
+	prob_r = pdf_dist(&entry_dist[0], Dmax);
+
+	if (prob_l < 1e-5 && prob_c < 1e-5 && prob_r < 1e-5)	{
+	//	cout << prob_l<<"\t"<<prob_c<<"\t"<<prob_r<<endl; 
+		return 0;
+	}
+
 
 	do {
 		h = eps * h / abs(pdf_prmot(x, mu_c, mu_s) - pdf_prmot(x-h, mu_c, mu_s));
