@@ -74,7 +74,7 @@ n_prmot--;
 	
 // The main loop. Calculate profiles for pulsars one by one.
 
-	for (int i=5; i < n_dist; i++)	{
+	for (int i=6; i < n_dist; i++)	{
 
 		for (int j=0; j < 10; j++)				
 			entry_dist [j] = dist [j][i];
@@ -155,14 +155,15 @@ z = 1.77;
 //	cout<<"Dcompar --"<<Dcompar<<endl;
 
 		if (Dcompar < D)	{
-			D = Dcompar;
+//			D = Dcompar;
+			dist2 = Dcompar; 
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
-			if (limit != '>')	{			
-				cout<<"Something went wrong!!!"<<endl;
-				cout<<"Exactly: D is "<< D <<", Dcompar is "<<Dcompar<<endl;
-				cout<<"limit is "<<limit<<", and DM2 is "<<DM2<<endl;
-				exit(2);
-			}
+//			if (limit != '>')	{			
+//				cout<<"Something went wrong!!!"<<endl;
+//				cout<<"Exactly: D is "<< D <<", Dcompar is "<<Dcompar<<endl;
+//				cout<<"limit is "<<limit<<", and DM2 is "<<DM2<<endl;
+//				exit(2);
+//			}
 		}
 		else
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
@@ -248,26 +249,26 @@ emergence=0;
 do {
 	D = Dmin;
 
-	cout<<entry_dist[0]<<endl;	
-	cout<<"Look here! -- "<<entry_dist[8]<<"\t"<<entry_dist[9]<<endl;
-	cout<<vl<<"\t"<<D<<endl;
-	cout<<"Here mu_c, mu_s -- "<<mu_c<<"\t"<<mu_s<<endl;	
+//	cout<<entry_dist[0]<<endl;	
+//	cout<<"Look here! -- "<<entry_dist[8]<<"\t"<<entry_dist[9]<<endl;
+//	cout<<vl<<"\t"<<D<<endl;
+//	cout<<"Here mu_c, mu_s -- "<<mu_c<<"\t"<<mu_s<<endl;	
 	
 	fl = f(&entry_dist[0], mu_c - 3*mu_s, D, vl);
 	fr = f(&entry_dist[0], mu_c - 3*mu_s, D+h, vl);
 
-	cout<<"fl, fr -- "<<fl << " \t  "<<fr <<endl;
+//	cout<<"fl, fr -- "<<fl << " \t  "<<fr <<endl;
 
 	if (D-h*fl/(fr-fl) <= 0.)	
 		Dmin/=2;		
 	else
 		Dmin = D - 0.1 * fl / (fr-fl);
 
-	cout<<Dmin << endl;
+//	cout<<Dmin << endl;
 
 	emergence++;
 
-		if (emergence>10)	{
+		if (emergence>100)	{
 			cout<<"Conditions for Dmin are not satisfied!"<<endl;
 			exit(3);
 		}
@@ -390,17 +391,25 @@ double sum;
 sum = 0;
 
 	if (entry_prmot[0] - 3.*entry_prmot[1] < 0.)		{
-		cout << "We use standard scheme here."<<endl;
+		cout << "We use standard (slow) scheme here."<<endl;
 		for (int i=0; i < 1000; i++)				{	
-			res[i] = prob_vl_special (entry_dist, entry_prmot, i);
-			sum += res[i];
+			if (i==0 || res[i-1] > (sum / 1e6))	{
+				res[i] = prob_vl_special (entry_dist, entry_prmot, i);
+				sum += res[i];
+			}
+			else
+				res[i] = 0;
 		}
 	}
 	else							{
 		cout << "We use fast scheme here."<<endl;
-		for (int i=40; i < 1000; i++)				{	
-			res[i] = prob_vl (entry_dist, entry_prmot, i);
-			sum += res[i];
+		for (int i=40; i < 1000; i++)				{
+			if (i==40 || res[i-1] > sum / 1e6)	{
+				res[i] = prob_vl (entry_dist, entry_prmot, i);
+				sum += res[i];
+			}
+			else
+				res[i] = 0;
 		}
 	}	
 	
@@ -423,7 +432,7 @@ double h, prob_c;
 double b, mu_c, mu_s, lf, lc, lr, D;
 
 sum = 0;
-h   = 0.033;
+h   = 0.03;
 
 	if (((int)vl)%10==0)
 		cout<<"vl -- "<<vl<<endl;
@@ -450,7 +459,8 @@ mu_s = entry_prmot[1];
 
 
 
-	for (int i=1; i < 455; i++)	{
+	for (int i=1; i < 460; i++)	{
+//cout<<i<<endl;
 		D = (double) i * h;
 		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D * cos(b))      * 206265/9.51e5, mu_c, mu_s ); 
 		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h)*cos(b)) * 206265/9.51e5, mu_c, mu_s );
