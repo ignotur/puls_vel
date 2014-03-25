@@ -74,7 +74,7 @@ n_prmot--;
 	
 // The main loop. Calculate profiles for pulsars one by one.
 
-	for (int i=2; i < n_dist; i++)	{
+	for (int i=12; i < 13; i++)	{
 
 		for (int j=0; j < 10; j++)		
 			entry_dist [j] = dist [j][i];
@@ -252,19 +252,29 @@ do {
 	D = Dmin;	
 	fl = f(&entry_dist[0], mu_c - 3*mu_s, D, vl);
 	fr = f(&entry_dist[0], mu_c - 3*mu_s, D+h, vl);
-	if (D-h*fl/(fr-fl) <= 0.)	
-		Dmin/=2;		
+	if (D-h*fl/(fr-fl) <= 0. && emergence < 70)	{	
+		Dmin/=2.;	
+		h = 0.1*Dmin;				}
+	else if (D-h*fl/(fr-fl) <= 0.)
+		Dmin= (D + Dmin/2.)/2.;	
 	else
-		Dmin = D - 0.1 * fl / (fr-fl);
+		Dmin = D - h * fl / (fr-fl);
 
 	emergence++;
 
-		if (emergence>100)	{
+//	cout<<Dmin<<endl;
+	
+	//	if (emergence==100)
+	//		h /= 2.;	
+
+		if (emergence>150)	{
 			cout<<"Conditions for Dmin are not satisfied!"<<endl;
 			exit(3);
 		}
 
 } while (abs(f(&entry_dist[0], mu_c - 3*mu_s, Dmin, vl))> 0.0001);
+
+//cout<<Dmin<<endl;
 
 Dmax = 2.5;
 emergence=0;
@@ -272,26 +282,33 @@ emergence=0;
 // Here we search for Dmax (distance until that
 // we are going to integrate)
 
+h=0.1;
+
 do {
 
 	D = Dmax;	
 	fl = f(&entry_dist[0], mu_c + 3*mu_s, D, vl);
-	fr = f(&entry_dist[0], mu_c + 3*mu_s, D+0.1, vl);
+	fr = f(&entry_dist[0], mu_c + 3*mu_s, D+h, vl);
 
-	if (D-h*fl/(fr-fl) <= 0.)	{
-		Dmax/=2;		}
+	if (D-h*fl/(fr-fl) <= 0. && emergence < 70)	{
+		Dmax/=2;
+		h = 0.1 * Dmax;		}
 	else
-		Dmax = D - 0.1 * fl / (fr-fl);
+		Dmax = D - h * fl / (fr-fl);
+
+//	cout<<Dmax<<endl;
 	
 	emergence++;
 
-		if (emergence>100)	{
-			cout<<"Conditions for Dmin are not satisfied!"<<endl;
+		if (emergence>150)	{
+			cout<<"Conditions for Dmax are not satisfied!"<<endl;
 			exit(4);
 		}
 
 
 } while (abs(f(&entry_dist[0], mu_c + 3*mu_s, Dmax, vl))> 0.0001);
+
+//cout<<Dmax<<endl;
 
 	D = Dmax;
 	
@@ -311,6 +328,8 @@ do {
 	prob_l = pdf_dist(&entry_dist[0], Dmin);
 	prob_c = pdf_dist(&entry_dist[0], Dinter);
 	prob_r = pdf_dist(&entry_dist[0], Dmax);
+
+//cout << prob_l<<"\t"<<prob_c<<"\t"<<prob_r<<endl; 
 
 	if (prob_l < 1e-5 && prob_c < 1e-5 && prob_r < 1e-5)	{
 	//	cout << prob_l<<"\t"<<prob_c<<"\t"<<prob_r<<endl; 
@@ -338,7 +357,7 @@ do {
 		} while (abs(f(&entry_dist[0], x_next, D, vl))> 0.001);	
 	
 		h_D = D - D_prev;	
-
+//cout<<D<<endl;
 		// Some kind of Runge-Kutta method (?) for P(D)*P(mu_l) 
 
 		k1 = h_D * pdf_prmot(x, mu_c, mu_s)         *  pdf_dist(&entry_dist[0], D);
