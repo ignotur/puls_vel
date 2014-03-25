@@ -74,7 +74,7 @@ n_prmot--;
 	
 // The main loop. Calculate profiles for pulsars one by one.
 
-	for (int i=0; i < n_dist; i++)	{
+	for (int i=2; i < n_dist; i++)	{
 
 		for (int j=0; j < 10; j++)		
 			entry_dist [j] = dist [j][i];
@@ -400,12 +400,12 @@ sum = 0;
 	else							{
 		cout << "We use fast scheme here."<<endl;
 		for (int i=40; i < 1000; i++)				{
-			if (i==40 || res[i-1] > sum / 1e6)	{
+		//	if (i==40 || res[i-1] > sum / 1e6)	{
 				res[i] = prob_vl (entry_dist, entry_prmot, i);
 				sum += res[i];
-			}
-			else
-				res[i] = 0;
+		//	}
+		//	else
+		//		res[i] = 0;
 		}
 	}	
 
