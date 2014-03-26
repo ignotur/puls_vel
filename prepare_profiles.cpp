@@ -232,7 +232,7 @@ z = 1.77;
 	
 			res = 1./(30.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(30., 2.)));
 		
-			if (i*0.05*cos(b)>10.)
+			if (i*0.05*cos(b)>15.)
 				res=0.;
 
 			pdf_at_dist[i] = res;
@@ -243,7 +243,7 @@ z = 1.77;
 
 		res = 1./(30.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(30., 2.)));
 		
-		if (D*cos(b)>10.)
+		if (D*cos(b)>15.)
 			res=0.;
 
 	}
@@ -322,6 +322,7 @@ double Dmin, Dmax, D_next, Dinter;
 double prob_l, prob_c, prob_r;
 double D, fl, fr;
 double D_prev, b;
+double h_newton;
 int emergence;
 
 mu_c    = entry_prmot[0];
@@ -349,7 +350,7 @@ emergence=0;
 // Here we search for Dmin (distance from which
 // we are going to integrate)
 
-	if (((int)vl)%10==0)
+	if (((int)vl)%100==0)
 		cout<<"vl -- "<<vl<<endl;
 
 do {
@@ -412,6 +413,8 @@ do {
 
 } while (abs(f(&entry_dist[0], mu_c + 3*mu_s, Dmax, vl))> 0.0001);
 
+h_newton = h;
+
 //cout<<Dmax<<endl;
 
 	D = Dmax;
@@ -435,13 +438,13 @@ do {
 
 //cout << prob_l<<"\t"<<prob_c<<"\t"<<prob_r<<endl; 
 
-	if (prob_l < 1e-5 && prob_c < 1e-5 && prob_r < 1e-5)	{
+	if (prob_l < 1e-8 && prob_c < 1e-8 && prob_r < 1e-8)	{
 	//	cout << prob_l<<"\t"<<prob_c<<"\t"<<prob_r<<endl; 
 		return 0;
 	}
 
 
-//	cout<<Dmax<<"\t"<<Dmin<<endl;
+	//cout<<Dmax<<"\t"<<Dmin<<endl;
 
 	do {
 		h = eps * h / abs(pdf_prmot(x, mu_c, mu_s) - pdf_prmot(x-h, mu_c, mu_s));
@@ -458,8 +461,8 @@ do {
 		do {
 			D_next = D;
 			fl = f(&entry_dist[0], x_next, D_next, vl);
-			fr = f(&entry_dist[0], x_next, D_next+0.1, vl);
-			D = D_next - 0.1 * fl/(fr-fl);
+			fr = f(&entry_dist[0], x_next, D_next+h_newton, vl);
+			D = D_next - h_newton * fl/(fr-fl);
 		} while (abs(f(&entry_dist[0], x_next, D, vl))> 0.001);	
 	
 		h_D = D - D_prev;	
@@ -520,7 +523,9 @@ sum = 0;
 	}
 	else							{
 		cout << "We use fast scheme here."<<endl;
-		for (int i=25; i < 1000; i++)				{
+		for (int i=0; i < 25; i++)
+			res[i] = 0.;
+		for (int i=20; i < 1000; i++)				{
 		//	if (i==40 || res[i-1] > sum / 1e6)	{
 				res[i] = prob_vl (entry_dist, entry_prmot, i);
 				sum += res[i];
@@ -551,7 +556,7 @@ double b, mu_c, mu_s, lf, lc, lr, D;
 sum = 0;
 h   = 0.03;
 
-	if (((int)vl)%10==0)
+	if (((int)vl)%100==0)
 		cout<<"vl -- "<<vl<<endl;
 
 
