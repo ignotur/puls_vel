@@ -20,6 +20,10 @@ double delta_vl (double *, double);
 double prob_vl (double *, double *, double);	
 double prob_vl_special (double *, double *, double);
 double f(double *, double, double, double);
+double pdf_dist_fast (double *, double);
+bool   compare       (double *, double *);
+void   copy          (double *, double *);
+
 
 int main (int argv, char * argc[]) 	{
 
@@ -143,7 +147,10 @@ z = 1.77;
 		res = 1./(dist[1]*sqrt(pi*2)) * exp (-pow(parallax - dist[0], 2)/(2.*pow(dist[1], 2.))); 
 	}
 	else		{	// We find appropriate for D DM and then compare it with the actual DM 
-		l = dist[8]/180.*pi;
+		res = pdf_dist_fast (dist, D);	
+
+
+/*		l = dist[8]/180.*pi;
 		b = dist[9]/180.*pi;
 		dist1 = dist[0];
 		dist2 = D;
@@ -170,11 +177,106 @@ z = 1.77;
 		
 		if (D*cos(b)>10.)
 			res = 0.;
-	
+*/	
 	}
 
 return res;
 }
+
+
+double pdf_dist_fast (double * dist, double D) {
+double res, z;
+double DM1, DM2, dist1, dist2;
+double sm, smtau, smtheta;
+char limit;
+double static dist_in_use [10];
+double static pdf_at_dist [300];
+double intpart, fractpart;
+double probl, probr;
+double l,b, Dcompar;
+int ndir;
+ndir = -1;
+z = 1.77;
+
+	if (compare(dist, &dist_in_use[0]))	{
+		fractpart = modf (D/0.05, &intpart);
+	
+//		cout<<intpart << "\t" <<pdf_at_dist[(int) intpart]<<endl;
+
+		if (intpart >= 300)
+			res = 0;
+		else 				{
+			probl = pdf_at_dist[(int) intpart];
+			probr = pdf_at_dist[(int) intpart +1];
+			res = (1-fractpart) * probl + fractpart * probr;
+	//		res = probl;
+		}
+	}
+	else	{
+	cout<<"It is a different pulsar!"<<endl;	
+		copy(&dist_in_use[0], dist);
+		l = dist[8]/180.*pi;
+		b = dist[9]/180.*pi;
+
+		dist1 = dist[0];
+		Dcompar = abs(z / sin(b));
+
+		for (int i=0; i < 300; i++)	{
+			dist2 = i*0.05;
+			
+			if (i==0)
+				dist2 = 0.001;
+				
+			dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta);	
+			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
+	
+			res = 1./(30.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(30., 2.)));
+		
+			if (i*0.05*cos(b)>10.)
+				res=0.;
+
+			pdf_at_dist[i] = res;
+		}
+
+		dist2 = D;
+		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
+
+		res = 1./(30.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(30., 2.)));
+		
+		if (D*cos(b)>10.)
+			res=0.;
+
+	}
+
+
+return res;
+}
+
+bool   compare       (double * a, double * b)	{
+bool flag;
+flag = true;
+
+	for (int i=0; i < 10; i++)	{	
+//		cout<<a[i]<<"\t"<<b[i]<<endl;
+		if (a[i] != b[i])
+			flag=false;
+	}
+
+return flag;
+}
+
+void   copy          (double * a, double * b) 	{
+
+cout<<"We start copying!"<<endl;
+
+	for (int i=0; i < 10; i++)	{		
+		a[i] = b[i];
+		cout<<a[i]<<"\t"<<b[i]<<endl;
+	}
+
+}
+
+
 
 //-------------------------------------------------
 // This function calculates correction of velocity
