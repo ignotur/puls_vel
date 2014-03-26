@@ -418,7 +418,7 @@ sum = 0;
 	}
 	else							{
 		cout << "We use fast scheme here."<<endl;
-		for (int i=10; i < 1000; i++)				{
+		for (int i=25; i < 1000; i++)				{
 		//	if (i==40 || res[i-1] > sum / 1e6)	{
 				res[i] = prob_vl (entry_dist, entry_prmot, i);
 				sum += res[i];
@@ -431,7 +431,7 @@ sum = 0;
 	
 	// Here we normalise the profile
 
-	for (int i=40; i < 1000; i++)
+	for (int i=0; i < 1000; i++)
 		res[i] /= sum;
 }
 
