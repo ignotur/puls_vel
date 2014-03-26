@@ -30,7 +30,6 @@ ofstream out_prof;
 
 double dist[10][1000], prmot[6][1000], res[1000];
 double entry_prmot[6], entry_dist[10]; 
-double trash;
 int n_dist, n_prmot;
 n_dist  = 0;
 n_prmot = 0;
@@ -74,7 +73,7 @@ n_prmot--;
 	
 // The main loop. Calculate profiles for pulsars one by one.
 
-	for (int i=12; i < 13; i++)	{
+	for (int i=0; i < n_dist; i++)	{
 
 		for (int j=0; j < 10; j++)		
 			entry_dist [j] = dist [j][i];
@@ -82,7 +81,7 @@ n_prmot--;
 			entry_prmot[j] = abs(prmot[j][i]);	
 		
 		cout<<"Working on profile -- "<<i<<endl;	
-	
+
 		profile(&entry_dist[0], &entry_prmot[0], &res[0]);	 // Call a function to compute profile	
 	
 		// Open file with appropriate name
@@ -96,7 +95,7 @@ n_prmot--;
 		cout << basic_name <<endl;
 		out_prof.open(basic_name);
 
-		for (int j=40; j < 1000; j++)
+		for (int j=10; j < 1000; j++)
 			out_prof << j+1 << "\t" << res[j] <<endl;	// profile writing 
 
 		out_prof.close();
@@ -184,14 +183,17 @@ return res;
 
 double delta_vl (double * dist, double D)	{
 double res;
-double theta, R, R0, l;
+double theta, R, R0, l, b;
 R = 8.5;
 R0= 8.5;
 theta = 225;
 
 l = dist[8]/180.*pi;
+b = dist[9]/180.*pi;
 
-res = (theta/R) * (R0 * cos(l) - D) - theta*cos(l);
+res = (theta/R) * (R0 * cos(l) - D*cos(b)) - theta*cos(l);
+
+//res = 0;
 
 return res;
 }
@@ -337,6 +339,8 @@ do {
 	}
 
 
+//	cout<<Dmax<<"\t"<<Dmin<<endl;
+
 	do {
 		h = eps * h / abs(pdf_prmot(x, mu_c, mu_s) - pdf_prmot(x-h, mu_c, mu_s));
 		if (h > 6.*mu_s/5.)
@@ -383,7 +387,7 @@ double res, b;
 
 b = dist[9]/180.*pi;
 
-res = (vl + delta_vl(dist, D))/(D*cos(b))/9.51e5*206265. - mu;
+res = (vl + delta_vl(dist, D))/(D)/9.51e5*206265. - mu;
 
 return res;
 }
@@ -400,10 +404,6 @@ double sum;
 
 sum = 0;
 
-//	for (int i=40; i < 1000; i++)				{	
-//		res[i] = prob_vl (entry_dist, entry_prmot, i);
-//		sum += res[i];
-//	}	
 
 	if (entry_prmot[0] - 3.*entry_prmot[1] < 0.)		{
 		cout << "We use standard (slow) scheme here."<<endl;
@@ -418,7 +418,7 @@ sum = 0;
 	}
 	else							{
 		cout << "We use fast scheme here."<<endl;
-		for (int i=40; i < 1000; i++)				{
+		for (int i=10; i < 1000; i++)				{
 		//	if (i==40 || res[i-1] > sum / 1e6)	{
 				res[i] = prob_vl (entry_dist, entry_prmot, i);
 				sum += res[i];
@@ -474,12 +474,12 @@ mu_s = entry_prmot[1];
 
 
 
-	for (int i=1; i < 460; i++)	{
+	for (int i=1; i < 500; i++)	{
 //cout<<i<<endl;
 		D = (double) i * h;
-		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D * cos(b))      * 206265/9.51e5, mu_c, mu_s ); 
-		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h)*cos(b)) * 206265/9.51e5, mu_c, mu_s );
-		lr = h * pdf_dist(entry_dist, D + 1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h)*cos(b)) * 206265/9.51e5, mu_c, mu_s );
+		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D )       * 206265/9.51e5, mu_c, mu_s ); 
+		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h)) * 206265/9.51e5, mu_c, mu_s );
+		lr = h * pdf_dist(entry_dist, D + 1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h)) * 206265/9.51e5, mu_c, mu_s );
 		sum += (lf + 4 * lc + lr) / 6.;
 	}
 
