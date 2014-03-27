@@ -151,7 +151,7 @@ if (!flag)	{
 	cout<<"We are reading files..."<<endl;
 
 	do {
-		name << "/profiles/profile_"<<i<<".dat";
+		name << "profiles/profile_"<<i<<".dat";
 		name_str = name.str();
 		char *basic_name = new char [name_str.size()];
 		memcpy(basic_name, name_str.c_str(), name_str.size());
@@ -189,11 +189,11 @@ L = 1.;
 		L *= integ (&entry_profile[0], sigma_1, sigma_2, w);
 
 	}
-L *= 1e110;
+//L *= 1e110;
 
-cout<<"So, L is "<<L<<endl;
+cout<<"So, L is "<<log10(L)<<endl;
 
-res = L;
+res = log10(L);
 
 return res;
 }
