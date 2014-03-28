@@ -149,35 +149,6 @@ z = 1.77;
 	else		{	// We find appropriate for D DM and then compare it with the actual DM 
 		res = pdf_dist_fast (dist, D);	
 
-
-/*		l = dist[8]/180.*pi;
-		b = dist[9]/180.*pi;
-		dist1 = dist[0];
-		dist2 = D;
-		Dcompar = z / sin(b);
-		dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta);	
-
-//	cout<<"dist1 -- " <<dist1<<", DM1 -- "<< DM1 <<endl;
-//	cout<<"Dcompar --"<<Dcompar<<endl;
-
-		if (Dcompar < D)	{
-//			D = Dcompar;
-			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
-//			if (limit != '>')	{			
-//				cout<<"Something went wrong!!!"<<endl;
-//				cout<<"Exactly: D is "<< D <<", Dcompar is "<<Dcompar<<endl;
-//				cout<<"limit is "<<limit<<", and DM2 is "<<DM2<<endl;
-//				exit(2);
-//			}
-		}
-		else
-			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
-
-		res = 1./(30.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(30., 2.)));
-		
-		if (D*cos(b)>10.)
-			res = 0.;
-*/	
 	}
 
 return res;
@@ -467,7 +438,6 @@ h_newton = h;
 	
 		h_D = D - D_prev;	
 //cout<<D<<endl;
-		// Some kind of Runge-Kutta method (?) for P(D)*P(mu_l) 
 
 		k1 = h_D * pdf_prmot(x, mu_c, mu_s)         *  pdf_dist(&entry_dist[0], D);
 		k2 = h_D * pdf_prmot(x+h/4., mu_c, mu_s)    *  pdf_dist(&entry_dist[0], D + h_D/4.);
@@ -484,8 +454,9 @@ res = sum;
 return res;
 }
 
-
-
+//----------------------------------------------------------------------
+// This function computes residuals for proper motion
+//----------------------------------------------------------------------
 
 double f(double * dist, double mu, double D, double vl)	{
 double res, b;
@@ -526,12 +497,8 @@ sum = 0;
 		for (int i=0; i < 25; i++)
 			res[i] = 0.;
 		for (int i=20; i < 1000; i++)				{
-		//	if (i==40 || res[i-1] > sum / 1e6)	{
 				res[i] = prob_vl (entry_dist, entry_prmot, i);
 				sum += res[i];
-		//	}
-		//	else
-		//		res[i] = 0;
 		}
 	}	
 
@@ -563,22 +530,6 @@ h   = 0.03;
 b = entry_dist[9] * pi / 180.;
 mu_c = entry_prmot[0];
 mu_s = entry_prmot[1];
-
-	// Let us check first should we integrate at all? It may happen 
-	// that the PDF for proper motions is too small (say less than 1e-6 or 1e-7)
-
-//	if (entry_dist[1] != -1)
-//		D = entry_dist[0];
-//	else
-//		D = 1./entry_dist[0];
-
-
-//	prob_c = pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D * cos(b))      * 206265/9.51e5, mu_c, mu_s );
-
-//	if (prob_c < 1e-12)	{
-//		return 0;
-//	}
-
 
 
 	for (int i=1; i < 500; i++)	{
