@@ -88,6 +88,12 @@ if (!flag)	{
 			do {
 				in >> trash;
 				in >> profile[i][counter];
+				
+				if (isnan(profile[i][counter]))	{
+					cout << "The file -- "<<i<<", contains nan!"<<endl;
+					exit(2);
+				}
+
 				counter++;
 			} while (!in.eof());
 		}

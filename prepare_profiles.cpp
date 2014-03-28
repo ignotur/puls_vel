@@ -201,7 +201,7 @@ z = 1.77;
 			dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta);	
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 	
-			res = 1./(30.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(30., 2.)));
+			res = 1./(15.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(15., 2.)));
 		
 			if (i*0.05*cos(b)>15.)
 				res=0.;
@@ -212,7 +212,7 @@ z = 1.77;
 		dist2 = D;
 		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 
-		res = 1./(30.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(30., 2.)));
+		res = 1./(15.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(15., 2.)));
 		
 		if (D*cos(b)>15.)
 			res=0.;
@@ -506,7 +506,8 @@ sum = 0;
 	// Here we normalise the profile
 
 	for (int i=0; i < 1000; i++)
-		res[i] /= sum;
+		if (sum != 0)
+			res[i] /= sum;
 }
 
 //----------------------------------------------------------------------
