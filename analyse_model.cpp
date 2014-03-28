@@ -39,7 +39,7 @@ double integ (double * profile, double sigma_1, double sigma_2, double w)	{
 double sum;
 sum = 0;
 
-	for (int i=11; i < 1000; i++)	
+	for (int i=11; i < 1500; i++)	
 		sum += profile[i] * model((double) i, sigma_1, sigma_2, w);
 
 return sum;
@@ -52,9 +52,9 @@ float res;
 
 ifstream in;
 
-double static profile[100][1000];
+double static profile[100][2000];
 bool static flag = false;
-double entry_profile[1000], trash;
+double entry_profile[2000], trash;
 double sigma_1, sigma_2, w;
 double L;
 
@@ -112,7 +112,7 @@ flag = true;
 
 L = 1.;
 	for (int j=0; j < i; j++)	{
-		for (int k = 11; k < 1000; k++)
+		for (int k = 11; k < 1500; k++)
 			entry_profile[k] = profile[j][k];	
 		L *= integ (&entry_profile[0], sigma_1, sigma_2, w);
 

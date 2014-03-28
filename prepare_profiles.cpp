@@ -8,6 +8,8 @@
 using namespace std;
 
 double const pi = 3.1415926;
+double sigma_DM = 5.;
+
 
 extern "C" {
 void dmdsm_ (double *l, double *b, int *ndir, double *dmpsr, double *dist, char *limit, double *sm, double *smtau, double *smtheta);
@@ -32,7 +34,7 @@ ifstream in_prmot (argc[2]);
 
 ofstream out_prof;
 
-double dist[10][1000], prmot[6][1000], res[1000];
+double dist[10][1000], prmot[6][1000], res[2000];
 double entry_prmot[6], entry_dist[10]; 
 int n_dist, n_prmot;
 n_dist  = 0;
@@ -99,7 +101,7 @@ n_prmot--;
 		cout << basic_name <<endl;
 		out_prof.open(basic_name);
 
-		for (int j=10; j < 1000; j++)
+		for (int j=10; j < 1500; j++)
 			out_prof << j+1 << "\t" << res[j] <<endl;	// profile writing 
 
 		out_prof.close();
@@ -201,7 +203,7 @@ z = 1.77;
 			dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta);	
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 	
-			res = 1./(15.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(15., 2.)));
+			res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
 		
 			if (i*0.05*cos(b)>15.)
 				res=0.;
@@ -212,7 +214,7 @@ z = 1.77;
 		dist2 = D;
 		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 
-		res = 1./(15.*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(15., 2.)));
+		res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
 		
 		if (D*cos(b)>15.)
 			res=0.;
@@ -483,7 +485,7 @@ sum = 0;
 
 	if (entry_prmot[0] - 3.*entry_prmot[1] < 0.)		{
 		cout << "We use standard (slow) scheme here."<<endl;
-		for (int i=0; i < 1000; i++)				{	
+		for (int i=0; i < 1500; i++)				{	
 			if (i==0 || res[i-1] > (sum / 1e6))	{
 				res[i] = prob_vl_special (entry_dist, entry_prmot, i);
 				sum += res[i];
@@ -496,7 +498,7 @@ sum = 0;
 		cout << "We use fast scheme here."<<endl;
 		for (int i=0; i < 25; i++)
 			res[i] = 0.;
-		for (int i=20; i < 1000; i++)				{
+		for (int i=20; i < 1500; i++)				{
 				res[i] = prob_vl (entry_dist, entry_prmot, i);
 				sum += res[i];
 		}
@@ -505,7 +507,7 @@ sum = 0;
 	
 	// Here we normalise the profile
 
-	for (int i=0; i < 1000; i++)
+	for (int i=0; i < 1500; i++)
 		if (sum != 0)
 			res[i] /= sum;
 }
