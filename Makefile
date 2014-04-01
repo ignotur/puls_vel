@@ -5,3 +5,8 @@ all: prepare_profiles.cpp libtc93.a analyse_model.cpp
 		gfortran -c pikaia.f
 		gfortran analyse_model.o pikaia.o -lc++ -lstdc++ -o analyse_model.out 
 		rm profiles/profile*.dat
+analysis:
+		g++ analyse_model.cpp -c
+		gfortran -c pikaia.f
+		gfortran analyse_model.o pikaia.o -lc++ -lstdc++ -o analyse_model.out 
+		

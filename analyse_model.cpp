@@ -39,7 +39,7 @@ double integ (double * profile, double sigma_1, double sigma_2, double w)	{
 double sum;
 sum = 0;
 
-	for (int i=11; i < 1500; i++)	
+	for (int i=11; i < 1000; i++)	
 		sum += profile[i] * model((double) i, sigma_1, sigma_2, w);
 
 return sum;
@@ -94,6 +94,17 @@ if (!flag)	{
 					exit(2);
 				}
 
+				if (isinf(profile[i][counter]))	{
+					cout << "The file -- "<<i<<", contains inf!"<<endl;
+					exit(3);
+				}
+
+				if ((profile[i][counter]) < 0)	{
+					cout << "The file -- "<<i<<", contains pdf < 0!"<<endl;
+					exit(5);
+				}
+
+
 				counter++;
 			} while (!in.eof());
 		}
@@ -115,13 +126,28 @@ L = 1.;
 		for (int k = 11; k < 1500; k++)
 			entry_profile[k] = profile[j][k];	
 		L *= integ (&entry_profile[0], sigma_1, sigma_2, w);
+	
+		if (isinf(L))	{
+			cout<<"L is inf at this stage!"<<endl;
+			cout<<"j = "<<j<<endl;
+			exit(4);
+		}
+		
+//		if (L == 0)	{
+//			cout<<"L is zero!"<<endl;
+//			cout<<"j = "<<j<<endl;
+//			exit(6);
+//		}
 
 	}
 //L *= 1e110;
 
 cout<<"So, L is "<<log10(L)<<endl;
 
+if (L!=0.)
 res = log10(L);
+else
+res = -500;
 
 return res;
 }
