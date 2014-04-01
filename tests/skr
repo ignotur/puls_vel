@@ -1,0 +1,7 @@
+#!/bin/bash
+g++ generator.cpp math_func.cpp -o generator.out 
+./generator.out $1 $2
+make
+./prepare_profiles.out dist.txt prmot.txt
+./analyse_model.out 
+

@@ -23,25 +23,21 @@ double v, phi, theta, real_prob, v_z, v_x, dist, parral, parral_err;
 double prob, which_err_prmotion, prmotion_err, dv;
 double dv1, dv2, dv3;
 double v1, v2;
-double l,b;
+double l,b, disp;
 
 	for (int i=0; i <34; i++)	{
 
 			if (i < 16)
-			v = atof(argc[1]) * norm_distr();
+				disp = atof(argc[1]);
 			else
-			v = atof(argc[2]) * norm_distr();
+				disp = atof(argc[2]);
+	
+			v = disp * norm_distr();
 		
-			if (v > 800)
-				do {
-					v = atof(argc[2]) * norm_distr();
-				} while (v < 800);
-
-			if (v < 20)
-				do {
-					v = atof(argc[2]) * norm_distr();
-				} while (v > 20);
-
+			if (abs(v) > 800 || abs(v) < 20)
+				do {    
+					v = disp * norm_distr();
+				} while (abs(v) > 800 || abs(v) < 20);
 
 
 			phi = rand() / rand_high_board;
@@ -112,7 +108,7 @@ double l,b;
 		l *= 180/pi;
 		b *= 180/pi;
 
-		cout<<"For pulsar "<<i<<" velocity is "<<v_z<<endl;
+		cout<<"For pulsar "<<i<<" velocity is "<<v_z<<"\t"<<v_x<<"\t"<<v<<endl;
 
 		out_dist  << parral << "\t" << abs(parral_err) << "\t" << abs(parral_err) << "\t -1\t -1\t -1\t -1\t -1\t "<<l<<"\t"<<b<<endl;
 		out_prmot << 206265 * v_z / dist / 9.4e5 << "\t" << prmotion_err <<  "\t" << prmotion_err << "\t" << 206265 * v_x / dist / 9.4e5 << "\t" << prmotion_err <<  "\t" << prmotion_err <<endl;
