@@ -32,6 +32,17 @@ double l,b;
 			else
 			v = atof(argc[2]) * norm_distr();
 		
+			if (v > 800)
+				do {
+					v = atof(argc[2]) * norm_distr();
+				} while (v < 800);
+
+			if (v < 20)
+				do {
+					v = atof(argc[2]) * norm_distr();
+				} while (v > 20);
+
+
 
 			phi = rand() / rand_high_board;
 			phi *= 2*pi;
@@ -77,7 +88,13 @@ double l,b;
 
 		v_z = (v+dv)*sin(theta);
 		v_x = (v+dv)*cos(theta)*cos(phi);	
-	
+
+		if (abs(v_z) < 15 && abs(v_x)> 15)	
+			v_z = v_x;
+		else if (abs(v_z)<15 && abs(v_x)<15 && abs((v+dv)*cos(theta)*sin(phi)) > 15)		
+			v_z = (v+dv)*cos(theta)*sin(phi);
+		else if (abs(v_z)<15 && abs(v_x)<15 && abs((v+dv)*cos(theta)*sin(phi)) < 15)
+			v_z = v;
 //	out<<abs(v)<<endl;
 
 
@@ -94,6 +111,8 @@ double l,b;
 //cout<<"Here"<<endl;
 		l *= 180/pi;
 		b *= 180/pi;
+
+		cout<<"For pulsar "<<i<<" velocity is "<<v_z<<endl;
 
 		out_dist  << parral << "\t" << abs(parral_err) << "\t" << abs(parral_err) << "\t -1\t -1\t -1\t -1\t -1\t "<<l<<"\t"<<b<<endl;
 		out_prmot << 206265 * v_z / dist / 9.4e5 << "\t" << prmotion_err <<  "\t" << prmotion_err << "\t" << 206265 * v_x / dist / 9.4e5 << "\t" << prmotion_err <<  "\t" << prmotion_err <<endl;
