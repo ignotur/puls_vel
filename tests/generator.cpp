@@ -12,7 +12,9 @@ int main (int argv, char * argc[]) {
 
 srand(time(0));
 
-ofstream out ("rand_vel.txt");
+
+ofstream out_dist  ("dist.txt");
+ofstream out_prmot ("prmot.txt");
 
 double const rand_high_board = 2.14665e+9;
 double const pi = 3.1415926;
@@ -20,8 +22,17 @@ double const pi = 3.1415926;
 double v, phi, theta, real_prob, v_z, v_x, dist, parral, parral_err;
 double prob, which_err_prmotion, prmotion_err, dv;
 double dv1, dv2, dv3;
-	for (int i=0; i <100; i++)	{
+double v1, v2;
+double l,b;
+
+	for (int i=0; i <34; i++)	{
+
+			if (i < 16)
 			v = atof(argc[1]) * norm_distr();
+			else
+			v = atof(argc[2]) * norm_distr();
+		
+
 			phi = rand() / rand_high_board;
 			phi *= 2*pi;
 
@@ -65,8 +76,29 @@ double dv1, dv2, dv3;
 //		dv3 = prmotion_err*0.001 /206265 * parral_err/(parral_err + 1./dist)*9.4e8;
 
 		v_z = (v+dv)*sin(theta);
+		v_x = (v+dv)*cos(theta)*cos(phi);	
 	
-		out<<abs(v)<<endl;
+//	out<<abs(v)<<endl;
+
+
+		l = rand() / rand_high_board;
+		l *= 2*pi;
+//cout<<"Here"<<endl;
+		do {
+			b = rand() / rand_high_board;
+			b *=  pi;
+			b -= pi/2.;
+			prob = rand() / rand_high_board;
+			real_prob = cos(b);
+		} while (real_prob < prob);
+//cout<<"Here"<<endl;
+		l *= 180/pi;
+		b *= 180/pi;
+
+		out_dist  << parral << "\t" << abs(parral_err) << "\t" << abs(parral_err) << "\t -1\t -1\t -1\t -1\t -1\t "<<l<<"\t"<<b<<endl;
+		out_prmot << 206265 * v_z / dist / 9.4e5 << "\t" << prmotion_err <<  "\t" << prmotion_err << "\t" << 206265 * v_x / dist / 9.4e5 << "\t" << prmotion_err <<  "\t" << prmotion_err <<endl;
+
+
 
 //	cout<<"v_z -- "<<v_z<<", dist -- "<<dist<<", parral -- "<<parral<<endl;
 //	cout<<"parral_err -- "<<parral_err<<", prmotion_err -- "<<prmotion_err<<endl;
