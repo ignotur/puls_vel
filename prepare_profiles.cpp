@@ -8,7 +8,7 @@
 using namespace std;
 
 double const pi = 3.1415926;
-double sigma_DM = 5.;
+double sigma_DM = 15.;
 
 
 extern "C" {
@@ -84,7 +84,7 @@ n_prmot--;
 		for (int j=0; j < 10; j++)		
 			entry_dist [j] = dist [j][i];
 		for (int j=0; j < 6; j++)	
-			entry_prmot[j] = abs(prmot[j][i]);	
+			entry_prmot[j] = prmot[j][i];	
 		
 		cout<<"Working on profile -- "<<i<<endl;	
 
@@ -144,6 +144,11 @@ int ndir;
 ndir = -1;
 z = 1.77;
 
+	if (isnan(D) || isinf(D))	{
+		cout << "The function pdf_dist obtained D which is "<<D<<endl;
+		exit(6);	
+	}
+
 	if (dist[1] != -1)  		{	// We base on the analytical form of the Gaussian
 		parallax = 1./D;
 		res = 1./(dist[1]*sqrt(pi*2)) * exp (-pow(parallax - dist[0], 2)/(2.*pow(dist[1], 2.))); 
@@ -170,6 +175,8 @@ double l,b, Dcompar;
 int ndir;
 ndir = -1;
 z = 1.77;
+
+//cout<<D<<" - here"<<endl;
 
 	if (compare(dist, &dist_in_use[0]))	{
 		fractpart = modf (D/0.05, &intpart);
@@ -218,9 +225,10 @@ z = 1.77;
 		
 		if (D*cos(b)>15.)
 			res=0.;
-
+	cout<<"Initialisation has finished"<<endl;
 	}
 
+//cout<<"Here"<<endl;
 
 return res;
 }
@@ -293,13 +301,13 @@ double k1, k2, k3, k4;
 double h_D, h_D_next;
 double Dmin, Dmax, D_next, Dinter;
 double prob_l, prob_c, prob_r;
-double D, fl, fr;
+double D, fl, fr, fc;
 double D_prev, b;
 double h_newton;
 int emergence;
 
-mu_c    = entry_prmot[0];
-mu_s    = entry_prmot[1];
+mu_c    = abs(entry_prmot[0]);
+mu_s    = abs(entry_prmot[1]);
 
 b       = entry_dist[9]/180.*pi; 
 
@@ -315,7 +323,7 @@ h = h_init;
 sum = 0.;
 
 
-h=0.1;
+h=0.3;
 
 Dmin = 2.5;
 emergence=0;
@@ -328,19 +336,24 @@ emergence=0;
 
 do {
 	D = Dmin;	
-	fl = f(&entry_dist[0], mu_c - 3*mu_s, D, vl);
-	fr = f(&entry_dist[0], mu_c - 3*mu_s, D+h, vl);
-	if (D-h*fl/(fr-fl) <= 0. && emergence < 70)	{	
-		Dmin/=2.;	
-		h = 0.1*Dmin;				}
-	else if (D-h*fl/(fr-fl) <= 0.)
-		Dmin= (D + Dmin/2.)/2.;	
+	fl = f(&entry_dist[0], mu_c - 3*mu_s, D-h/2., vl);
+	fc = f(&entry_dist[0], mu_c - 3*mu_s, D, vl);
+	fr = f(&entry_dist[0], mu_c - 3*mu_s, D+h/2., vl);
+
+//	cout<<"Before decision -- "<<Dmin<<"\t"<<h<<"\t"<<f(&entry_dist[0], mu_c - 3*mu_s, Dmin, vl)<<"\t"<<(fr - fl)/h<<"\t"<< D - h*fc/(fr- fl) <<endl;
+	
+	if ((D - h*fc/(fr-  fl)) <= 0.)	{	
+		Dmin/=5.;	
+		h = min(0.1*Dmin, h);				}
 	else
-		Dmin = D - h * fl / (fr-fl);
+		Dmin = D - h * fc / (fr- fl);
+
+	if (Dmin > 100)
+		Dmin = 2.5/(emergence+1);
 
 	emergence++;
 
-//	cout<<Dmin<<endl;
+//	cout<<"After decision --  "<<Dmin<<"\t"<<h<<"\t"<<f(&entry_dist[0], mu_c - 3*mu_s, Dmin, vl)<<"\t"<<(fr - fl)/h<<"\t"<< D - h*fc/(fr- fl) <<endl;
 	
 	//	if (emergence==100)
 	//		h /= 2.;	
@@ -354,30 +367,40 @@ do {
 
 //cout<<Dmin<<endl;
 
-Dmax = 2.5;
+Dmax = Dmin;
 emergence=0;
+
+//cout<<"---------------Dmax------------"<<endl;
 
 // Here we search for Dmax (distance until that
 // we are going to integrate)
 
-h=0.1;
+h=min(0.1, Dmax/15.);
 
 do {
 
 	D = Dmax;	
-	fl = f(&entry_dist[0], mu_c + 3*mu_s, D, vl);
-	fr = f(&entry_dist[0], mu_c + 3*mu_s, D+h, vl);
+	fl = f(&entry_dist[0], mu_c + 3*mu_s, D-h/2., vl);
+	fc = f(&entry_dist[0], mu_c + 3*mu_s, D, vl);
+	fr = f(&entry_dist[0], mu_c + 3*mu_s, D+h/2., vl);
 
-	if (D-h*fl/(fr-fl) <= 0. && emergence < 70)	{
-		Dmax/=2;
-		h = 0.1 * Dmax;		}
+//	cout<<"Before decision -- "<<Dmax<<"\t"<<h<<"\t"<<f(&entry_dist[0], mu_c + 3*mu_s, Dmax, vl)<<"\t"<<(fr - fl)/h<<"\t"<< D - h*fc/(fr- fl) <<endl;
+	
+
+	if (D-h*fc/(fr-fl) <= 0.)	{
+		Dmax/=5;
+		h = min(0.1 * Dmax, h);		}
 	else
-		Dmax = D - h * fl / (fr-fl);
+		Dmax = D - h * fc / (fr-fl);
 
 //	cout<<Dmax<<endl;
-	
-	emergence++;
+	if (Dmax > 100)
+		Dmax = 2.5/(emergence+1);
 
+	emergence++;
+	
+//	cout<<"After decision --  "<<Dmax<<"\t"<<h<<"\t"<<f(&entry_dist[0], mu_c + 3*mu_s, Dmax, vl)<<"\t"<<(fr - fl)/h<<"\t"<< D - h*fc/(fr- fl) <<endl;
+	
 		if (emergence>150)	{
 			cout<<"Conditions for Dmax are not satisfied!"<<endl;
 			exit(4);
@@ -387,8 +410,9 @@ do {
 } while (abs(f(&entry_dist[0], mu_c + 3*mu_s, Dmax, vl))> 0.0001);
 
 h_newton = h;
+h_newton = min(abs(Dmax - Dmin) / 25., 0.1); 
 
-//cout<<Dmax<<endl;
+cout<<"Dmin, Dmax, h_newton -- "<<Dmin<<"\t"<<Dmax<<"\t"<<h_newton<<endl;
 
 	D = Dmax;
 	
@@ -408,6 +432,8 @@ h_newton = h;
 	prob_l = pdf_dist(&entry_dist[0], Dmin);
 	prob_c = pdf_dist(&entry_dist[0], Dinter);
 	prob_r = pdf_dist(&entry_dist[0], Dmax);
+
+	D = Dinter;
 
 //cout << prob_l<<"\t"<<prob_c<<"\t"<<prob_r<<endl; 
 
@@ -433,13 +459,25 @@ h_newton = h;
 
 		do {
 			D_next = D;
-			fl = f(&entry_dist[0], x_next, D_next, vl);
-			fr = f(&entry_dist[0], x_next, D_next+h_newton, vl);
-			D = D_next - h_newton * fl/(fr-fl);
+			fl = f(&entry_dist[0], x_next, D_next-h_newton/2., vl);
+			fc = f(&entry_dist[0], x_next, D_next, vl);
+			fr = f(&entry_dist[0], x_next, D_next+h_newton/2., vl);
+
+			if (D_next - h_newton * fc/(fr-fl) < Dmin)	{
+				D = Dmin;
+				h_newton /= 2.;				}
+			else if (D_next - h_newton * fc/(fr-fl) > Dmax)	{
+				D = Dmax;
+				h_newton /= 2.;				}
+			else
+				D = D_next - h_newton * fc/(fr-fl);
+
+		cout << D << endl;
+
 		} while (abs(f(&entry_dist[0], x_next, D, vl))> 0.001);	
 	
 		h_D = D - D_prev;	
-//cout<<D<<endl;
+//cout<<"This is D -- "<<D<<endl;
 
 		k1 = h_D * pdf_prmot(x, mu_c, mu_s)         *  pdf_dist(&entry_dist[0], D);
 		k2 = h_D * pdf_prmot(x+h/4., mu_c, mu_s)    *  pdf_dist(&entry_dist[0], D + h_D/4.);
@@ -465,7 +503,9 @@ double res, b;
 
 b = dist[9]/180.*pi;
 
-res = (vl + delta_vl(dist, D))/(D)/9.51e5*206265. - mu;
+//res = abs(vl + delta_vl(dist, D))/(D)/9.51e5*206265. - abs(mu);
+
+res = abs(mu + delta_vl(dist, D)/D/9.51e5*206265) - vl/D/9.51e5*206265;
 
 return res;
 }
@@ -483,7 +523,7 @@ double sum;
 sum = 0;
 
 
-	if (entry_prmot[0] - 3.*entry_prmot[1] < 0.)		{
+	if (abs(entry_prmot[0]) - 3.*abs(entry_prmot[1]) < 0.)		{
 		cout << "We use standard (slow) scheme here."<<endl;
 		for (int i=0; i < 1500; i++)				{	
 			if (i==0 || res[i-1] > (sum / 1e6))	{
@@ -538,9 +578,9 @@ mu_s = entry_prmot[1];
 	for (int i=1; i < 500; i++)	{
 //cout<<i<<endl;
 		D = (double) i * h;
-		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D )       * 206265/9.51e5, mu_c, mu_s ); 
-		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h)) * 206265/9.51e5, mu_c, mu_s );
-		lr = h * pdf_dist(entry_dist, D + 1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h)) * 206265/9.51e5, mu_c, mu_s );
+		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (abs(vl + delta_vl(entry_dist, D)))        / (D )       * 206265/9.51e5, mu_c, mu_s ); 
+		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (abs(vl + delta_vl(entry_dist, D + 0.5*h)))/((D+0.5*h)) * 206265/9.51e5, mu_c, mu_s );
+		lr = h * pdf_dist(entry_dist, D + 1.0*h) * pdf_prmot( (abs(vl + delta_vl(entry_dist, D + 1.0*h)))/((D+1.0*h)) * 206265/9.51e5, mu_c, mu_s );
 		sum += (lf + 4 * lc + lr) / 6.;
 	}
 
