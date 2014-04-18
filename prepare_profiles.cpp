@@ -19,7 +19,7 @@ void profile  (double * dist, double * prmot, double * res);
 double pdf_dist (double *, double);
 double pdf_prmot(double, double, double);
 double delta_vl (double *, double);
-double prob_vl (double *, double *, double);	
+//double prob_vl (double *, double *, double);	
 double prob_vl_special (double *, double *, double);
 double f(double *, double, double, double);
 double pdf_dist_fast (double *, double);
@@ -273,7 +273,7 @@ res = (theta/R) * (R0 * cos(l) - D*cos(b)) - theta*cos(l);
 
 return res;
 }
-
+/*
 //-------------------------------------------------------------------------
 // The main function of the program - calculates integral eq. (1)
 // from the article by Brisken et al. (2003) (taking into account
@@ -405,7 +405,20 @@ do {
 h_newton = h;
 h_newton = min(abs(Dmax - Dmin) / 25., 0.1); 
 
-//cout<<"Dmin, Dmax, h_newton -- "<<Dmin<<"\t"<<Dmax<<"\t"<<h_newton<<endl;
+double exchange;
+
+//cout << "Dmin, Dmax, h_newton -- "<<Dmin<<"\t"<<Dmax<<"\t"<<h_newton<<endl;
+//cout << "x_left -- "<<x_left <<  " \t x_right -- " << x_right << endl;
+
+	if (Dmin > Dmax)	{
+		exchange = Dmin;
+		Dmin = Dmax;
+		Dmax = exchange;
+	}
+
+//cout << "Dmin, Dmax, h_newton -- "<<Dmin<<"\t"<<Dmax<<"\t"<<h_newton<<endl;
+
+//exit(0);
 
 	D = Dmax;
 	
@@ -446,6 +459,9 @@ h_newton = min(abs(Dmax - Dmin) / 25., 0.1);
 			h = x - x_left;
 		x_next = x - h;
 		
+
+		cout<<"x_next -- "<< x_next<<"\t"<<x_left<<"\t"<<x_right<<endl;
+
 		// Compute h_D by means on Newton algorithm
 		
 		//D_prev = x_next / (x_right - x_left) * (Dmax - Dmin);
@@ -458,7 +474,8 @@ h_newton = min(abs(Dmax - Dmin) / 25., 0.1);
 		D_prev = D;
 
 		double tmp;
-
+		double emergence_border_close;
+		bool   emergence_border_close_flag;
 
 //		cout << x_left << "\t" << x_next << "\t" << x_right<<endl;
 //		cout << Dmin   << "\t" << D      << "\t" << Dmax << endl;
@@ -466,18 +483,25 @@ h_newton = min(abs(Dmax - Dmin) / 25., 0.1);
 //		cout << f(&entry_dist[0], x_right, Dmax, vl)<<endl;
 //		cout << f(&entry_dist[0], x_next, D, vl)<<endl;
 
-/*		tmp = 0;
+		tmp = 0;
 		do {
 
-		D = D - 0.03*f(&entry_dist[0], x_next, D, vl);
+		D = D - 0.02*f(&entry_dist[0], x_next, D, vl);
 		tmp ++;
-		} while (abs(f(&entry_dist[0], x_next, D, vl)) > 0.001);
-		cout << D<<"\t" <<tmp<<endl;
-*/
+		} while (abs(f(&entry_dist[0], x_next, D, vl)) > 0.001 && tmp < 10);
+		cout << "D is "<<D<<"\t" <<tmp<<" \t Dmax, Dmin -- "<<Dmax<<"\t"<<Dmin<<endl;
+	
+		if (D >= Dmax || D <= Dmin)	{
+			D = ((x_right - x_next) * Dmax + (x_next-x_left) * Dmin) / (x_right - x_left);
+			cout << "D has changed -- "<<D<<endl;
+		}
+
 		h_newton = min(abs(Dmax - Dmin) / 25., 0.1); 
 		
 	//	cout << "-----------------------------------------------------" << endl;
 
+		emergence_border_close = 0;
+		emergence_border_close_flag = false;
 		do {
 			D_next = D;
 			fl = f(&entry_dist[0], x_next, D_next-h_newton/2., vl);
@@ -485,20 +509,25 @@ h_newton = min(abs(Dmax - Dmin) / 25., 0.1);
 			fr = f(&entry_dist[0], x_next, D_next+h_newton/2., vl);
 
 			//cout << D_next - h_newton * fc/(fr-fl) << endl;
-//			cout << fl << "\t" << fc << "\t" << fr << "\t" << D_next - h_newton * fc/(fr-fl) << "\t" << h_newton << endl;
-			
+			//cout << fl << "\t" << fc << "\t" << fr << "\t" << D_next - h_newton * fc/(fr-fl) << "\t" << h_newton << endl;
+			//cout << Dmin << "\t" << D_next <<"\t"<< Dmax << endl;	
 
-			if ((D_next - h_newton * fc/(fr-fl)) > Dmin && x_next > 0)	{
+			if ((D_next - h_newton * fc/(fr-fl)) < Dmin)	{
 				//D = Dmin;
 				//D = D_next - h_newton/3. * fc/(fr-fl);
 				//h_newton /= 2.;
-				D = D + (Dmin - D) / 3.;
+				D = Dmin + (D - Dmin) / 3.;
 			}
-			else if ((D_next - h_newton * fc/(fr-fl)) < Dmax  && x_next > 0)	{
+			else if ((D_next - h_newton * fc/(fr-fl)) > Dmax)	{
 				//D = Dmax;
 				//D = D_next - h_newton/3. * fc/(fr-fl);
 				//h_newton /= 2.;
-				D = D - (D - Dmax) / 3.;
+				D = Dmax - (Dmax - D) / 3.;
+				cout << "We are here -- "<< D <<  "\t"<< abs(f(&entry_dist[0], x_next, D, vl))<< endl;
+				if (emergence_border_close > 50 && emergence_border_close < 55)
+					D = Dmin;
+				if (emergence_border_close > 100)
+					exit(0);
 			}
 			else
 				D = D_next - h_newton * fc/(fr-fl);
@@ -512,9 +541,21 @@ h_newton = min(abs(Dmax - Dmin) / 25., 0.1);
 
 //				if (D<Dmin || D>Dmax)
 //					D = ((x_right - x_next) * Dmin + (x_next-x_left) * Dmax) / (x_right - x_left);
+				
+			emergence_border_close++;
+
 					
-
-
+			if (emergence_border_close > 30 && abs(f(&entry_dist[0], x_next, D, vl)) < 0.01) 	{
+				emergence_border_close_flag = true;
+				break;
+			}
+			/*
+			else if (emergence_border_close > 200)	{
+				emergence_border_close_flag = true;
+				cout << "The Newton algorithm cannot define the value"<<endl;
+				break;
+			}
+	
 			if (isnan(D) || isnan(h_newton) || isinf(D) || isnan(h_newton))	{
 				cout << "Error inside newton! " << D << "\t" << h_newton << endl;
 				exit(0);
@@ -523,13 +564,13 @@ h_newton = min(abs(Dmax - Dmin) / 25., 0.1);
 		//cout << D<<"\t"<<h_newton << endl;
 
 		} while (abs(f(&entry_dist[0], x_next, D, vl))> 0.001);	
-	//	cout << D << endl;
+		cout << D << endl;
 
 //exit(0);
 		tmp = 0;
 
 		if (isnan(D) || isinf(D))		{
-			cout << "Slow iterative algorithm is going to be used. Range Dmin, Dmax --" << Dmin << "\t" << Dmax <<endl;
+			cout << "Slow iterative algorithm is going to be used. Range Dmin, Dmax -- " << Dmin << "\t" << Dmax <<endl;
 			cout << x_right << "\t" << x_next << "\t" << x_left << endl;
 			D = ((x_right - x_next) * Dmin + (x_next-x_left) * Dmax) / (x_right - x_left);
 			do {
@@ -538,6 +579,29 @@ h_newton = min(abs(Dmax - Dmin) / 25., 0.1);
 			} while (abs(f(&entry_dist[0], x_next, D, vl)) > 0.001);
 			cout << tmp << "\t" << D <<endl;
 		}
+
+	//	for (int i=0; i < 15; i++)	{
+
+		if (emergence_border_close_flag)	{
+			for (int i=0; i < 50; i++)	{
+				cout << "Slow iterative algorithm is going to be used. Range Dmin, Dmax -- " << Dmin << "\t" << Dmax <<endl;
+				cout << x_right << "\t" << x_next << "\t" << x_left << endl;
+				if (D > Dmin && D < Dmax)
+					D = ((x_right - x_next) * Dmin + (x_next-x_left) * Dmax) / (x_right - x_left);
+				do {
+					D = D - 0.005*f(&entry_dist[0], x_next, D, vl);
+					tmp ++;
+				} while (abs(f(&entry_dist[0], x_next, D, vl)) > 0.001);
+				cout << tmp << "\t, D is " << D <<endl;
+			x_next -= h;
+			}
+		exit(0);
+		}
+	//	x_next =- h;
+		
+	//}
+
+	//exit(0)
 
 //		cout << D <<"\t"<<h_newton <<"\t"<< f(&entry_dist[0], x_next, D, vl) <<endl;
 
@@ -561,7 +625,7 @@ h_newton = min(abs(Dmax - Dmin) / 25., 0.1);
 		//cout << D<<"\t"<<h_newton << endl;
 
 		} while (abs(f(&entry_dist[0], x_next, D, vl))> 0.001);	
-*/	
+	
 		h_D = D - D_prev;	
 //cout<<"This is D -- "<<D<<endl;
 
@@ -579,7 +643,7 @@ h_newton = min(abs(Dmax - Dmin) / 25., 0.1);
 res = sum;
 return res;
 }
-
+*/
 //----------------------------------------------------------------------
 // This function computes residuals for proper motion
 //----------------------------------------------------------------------
@@ -609,27 +673,27 @@ double sum;
 sum = 0;
 
 
-	if (abs(entry_prmot[0]) - 3.*abs(entry_prmot[1]) < 0.)		{
+//	if (abs(entry_prmot[0]) - 3.*abs(entry_prmot[1]) < 0.)		{
 		cout << "We use standard (slow) scheme here."<<endl;
 		for (int i=0; i < 1500; i++)				{	
-			if (i==0 || res[i-1] > (sum / 1e6))	{
+		//	if (i==0 || res[i-1] > (sum / 1e6))	{
 				res[i] = prob_vl_special (entry_dist, entry_prmot, i);
 				sum += res[i];
-			}
-			else
-				res[i] = 0;
+		//	}
+		//	else
+		//		res[i] = 0;
 		}
-	}
-	else							{
+//	}
+/*	else							{
 		cout << "We use fast scheme here."<<endl;
 		for (int i=0; i < 25; i++)
 			res[i] = 0.;
 		for (int i=20; i < 1500; i++)				{
-				res[i] = prob_vl (entry_dist, entry_prmot, i);
+				res[i] = prob_vl_special (entry_dist, entry_prmot, i);
 				sum += res[i];
 		}
 	}	
-
+*/
 	
 	// Here we normalise the profile
 
@@ -648,9 +712,10 @@ double prob_vl_special (double * entry_dist, double * entry_prmot, double vl)	{
 double sum;
 double h, prob_c;
 double b, mu_c, mu_s, lf, lc, lr, D;
+double sign_v;
 
 sum = 0;
-h   = 0.03;
+h   = 0.001;
 
 	if (((int)vl)%100==0)
 		cout<<"vl -- "<<vl<<endl;
@@ -660,13 +725,16 @@ b = entry_dist[9] * pi / 180.;
 mu_c = entry_prmot[0];
 mu_s = entry_prmot[1];
 
+sign_v = mu_c / abs(mu_c);
 
-	for (int i=1; i < 500; i++)	{
+vl = sign_v * vl;
+
+	for (int i=1; i < 15000; i++)	{
 //cout<<i<<endl;
 		D = (double) i * h;
-		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (abs(vl + delta_vl(entry_dist, D)))        / (D )       * 206265/9.51e5, mu_c, mu_s ); 
-		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (abs(vl + delta_vl(entry_dist, D + 0.5*h)))/((D+0.5*h)) * 206265/9.51e5, mu_c, mu_s );
-		lr = h * pdf_dist(entry_dist, D + 1.0*h) * pdf_prmot( (abs(vl + delta_vl(entry_dist, D + 1.0*h)))/((D+1.0*h)) * 206265/9.51e5, mu_c, mu_s );
+		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D )       * 206265/9.51e5, mu_c, mu_s ); 
+		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h)) * 206265/9.51e5, mu_c, mu_s );
+		lr = h * pdf_dist(entry_dist, D + 1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h)) * 206265/9.51e5, mu_c, mu_s );
 		sum += (lf + 4 * lc + lr) / 6.;
 	}
 
