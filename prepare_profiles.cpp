@@ -250,7 +250,11 @@ cout<<"We start copying!"<<endl;
 
 }
 
-
+/*  Scalar product of two 3-vectors  (double precision) */
+double product_ecliptic(double *va,double *vb)
+{
+  return va[0]*vb[0]+va[1]*vb[1]+va[2]*vb[2];
+}
 
 //-------------------------------------------------
 // This function calculates correction of velocity
@@ -260,16 +264,93 @@ cout<<"We start copying!"<<endl;
 double delta_vl (double * dist, double D)	{
 double res;
 double theta, R, R0, l, b;
+double sin_alpha, cos_alpha;
+double apex_l, apex_b;
+double cos_lambda, sin_lambda;
+double cos_alpha_add;
+double sign_pec, v0gal;
+double vsun[4], b2000, l2000, vsl, vsb;
+double p[3], q[3], r[3], vgal[3], galcart[3];
+
+v0gal = 225;
+
+vsun[0]=9.2; vsun[1]=10.5; vsun[2]=6.9;
+
+apex_l = 58.87/180.*pi;
+apex_b = 17.72/180.*pi;
+
 R = 8.5;
 R0= 8.5;
-theta = 225;
+theta = 225; //225;
 
 l = dist[8]/180.*pi;
 b = dist[9]/180.*pi;
 
-res = (theta/R) * (R0 * cos(l) - D*cos(b)) - theta*cos(l);
+l2000 = l;
+b2000 = b;
 
-//res = 0;
+p[0] = -sin(l2000);
+p[1] =  cos(l2000);
+p[2] =  0.0;
+
+q[0] = -sin(b2000)*cos(l2000);
+q[1] = -sin(b2000)*sin(l2000);
+q[2] =  cos(b2000);
+
+r[0] =  cos(b2000)*cos(l2000);
+r[1] =  cos(b2000)*sin(l2000);
+r[2] =  sin(b2000);
+
+/* Find the proper motions expected from galactic rotation using rotation */
+/* curve model */
+double vrgal, pmlrot, pmbrot, thetagal;
+
+galcart[0] = cos(l2000)*cos(b2000);
+galcart[1] = sin(l2000)*cos(b2000);
+galcart[2] = sin(b2000);
+
+for (int i=0;i < 3;i++)
+    galcart[i]=galcart[i]*D; 
+
+thetagal = atan2(galcart[1],R0-galcart[0]);
+vrgal = v0gal; /* Use flat rotation curve */
+vgal[0] = vrgal*sin(thetagal);
+vgal[1] = vrgal*cos(thetagal)-v0gal;
+vgal[2] = 0.0;
+
+pmlrot=product_ecliptic(p,vgal);
+pmbrot=product_ecliptic(q,vgal); 
+
+vsl = -product_ecliptic(p,vsun);
+vsb = -product_ecliptic(q,vsun); 
+
+//cos_lambda = cos(pi/2. - apex_b)*cos(pi/2. - b) + sin (pi/2. - apex_b) * sin (pi/2. - b) * cos(l - apex_l);
+//sin_lambda = sqrt(1 - cos_lambda*cos_lambda);
+//cos_alpha_add = (cos(-b + apex_b) - cos_lambda*cos((l - apex_l)*cos(apex_b))) / (sin_lambda*sin((l-apex_l)*cos(apex_b)));
+
+
+
+//R = R0 - D*cos(l)*cos(b);
+
+//R = sqrt(R0*R0 + D*D*cos(b)*cos(b) - 2 * R0 * D *cos(b)*cos(l));
+
+//sin_alpha = sqrt(1. - pow((R*R + D*D*cos(b)*cos(b) - R0*R0) / (2*D*cos(b)*R), 2.));
+
+//cos_alpha = (R*R + D*D*cos(b)*cos(b) - R0*R0) / (2*D*cos(b)*R);
+
+//res = (theta/R) * (R0 * cos(l) - D*cos(b)) - theta*cos(l);
+
+//cout << sin_alpha << endl;
+
+//cout << cos_alpha_add << "\t" << (sin_lambda*sin((l-apex_l)*cos(apex_b))) << "\t" <<cos_lambda<<endl;
+
+//sign_pec = sin(l - apex_l) / abs(sin(l - apex_l));
+
+//res = -theta * cos_alpha - theta * cos(l) + vsl /*+ sign_pec * 16.5 * abs(sin_lambda) * abs(cos_alpha_add)*/;
+res = pmlrot+vsl;
+//cout << res << endl;
+
+res = 0;
 
 return res;
 }
@@ -713,6 +794,9 @@ double sum;
 double h, prob_c;
 double b, mu_c, mu_s, lf, lc, lr, D;
 double sign_v;
+double dang2vel;
+
+dang2vel = 4.610573776;
 
 sum = 0;
 h   = 0.001;
@@ -732,9 +816,9 @@ vl = sign_v * vl;
 	for (int i=1; i < 15000; i++)	{
 //cout<<i<<endl;
 		D = (double) i * h;
-		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D )       * 206265/9.51e5, mu_c, mu_s ); 
-		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h)) * 206265/9.51e5, mu_c, mu_s );
-		lr = h * pdf_dist(entry_dist, D + 1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h)) * 206265/9.51e5, mu_c, mu_s );
+		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D )      /dang2vel , mu_c, mu_s ); 
+		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h))/dang2vel , mu_c, mu_s );
+		lr = h * pdf_dist(entry_dist, D + 1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h))/dang2vel , mu_c, mu_s );
 		sum += (lf + 4 * lc + lr) / 6.;
 	}
 
