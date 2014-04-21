@@ -5,12 +5,12 @@ using namespace std;
 
 int main ()	{
 
-ifstream in_prmot ("prmot.txt");
-ifstream in_dist  ("dist.txt");
+ifstream in_prmot ("ext_prmot.txt");
+ifstream in_dist  ("ext_dist.txt");
 ifstream in_ages  ("ages.txt");
 
-ofstream out_prmot ("prmot_short.txt");
-ofstream out_dist  ("dist_short.txt");
+ofstream out_prmot ("young_prmot.txt");
+ofstream out_dist  ("young_dist.txt");
 
 int n_dist=0, n_prmot=0, n_ages=0;
 double prmot[6][1000], dist[10][1000], ages[1000];
@@ -42,7 +42,7 @@ n_ages--;
 	}
 	
 	for (int i=0; i < n_dist; i++)	
-		if (ages[i] < 5e7)					{
+		if (ages[i] < 5e6)					{
 			for (int j=0; j < 5; j++)
 				out_prmot << prmot[j][i] << "\t";
 			out_prmot << prmot[5][i] << endl;
