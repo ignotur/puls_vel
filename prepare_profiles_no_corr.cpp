@@ -90,7 +90,7 @@ n_prmot--;
 		profile(&entry_dist[0], &entry_prmot[0], &res[0]);	 // Call a function to compute profile	
 	
 		// Open file with appropriate name
-		name << "profiles/profile_"<<i<<".dat";
+		name << "profiles/profile_"<<i+n_dist<<".dat";
 		name_str = name.str();
 		char *basic_name = new char [name_str.size()];
 		memcpy(basic_name, name_str.c_str(), name_str.size());
