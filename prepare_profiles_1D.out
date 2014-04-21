@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./prepare_profiles.out $1 $2
+./prepare_profiles_no_corr.out $1 $2
