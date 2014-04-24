@@ -11,7 +11,13 @@ all: prepare_profiles_2D.cpp prepare_profiles.cpp prepare_profiles_no_corr.cpp l
 		gfortran analyse_model_pach.o pikaia_1D.o -lc++ -lstdc++ -o analyse_model_pach.out 
 		rm profiles/profile*.dat
 analysis:
+		g++ analyse_model_pach.cpp -c
 		g++ analyse_model.cpp -c
+		g++ analyse_model_igf.cpp -c -I/opt/local/include -L/opt/local/lib -lgsl -lgslcblas
 		gfortran -c pikaia.f
+		gfortran -c pikaia_1D.f
 		gfortran analyse_model.o pikaia.o -lc++ -lstdc++ -o analyse_model.out 
+		gfortran analyse_model_pach.o pikaia_1D.o -lc++ -lstdc++ -o analyse_model_pach.out 
+		gfortran analyse_model_igf.o pikaia_1D.o -lc++ -lstdc++ -I/opt/local/include -L/opt/local/lib -lgsl -lgslcblas -o analyse_model_igf.out
+
 		

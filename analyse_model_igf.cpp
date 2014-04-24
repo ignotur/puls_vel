@@ -4,6 +4,8 @@
 #include <cstring>
 #include <cstdlib>
 #include <sstream>
+#include <gsl/gsl_sf_gamma.h>
+
 
 extern "C" float dwod_ (int *, float*);
 
@@ -24,12 +26,13 @@ double integ (double *, double);
 double model (double vl, double v_)	{
 double res;
 
-	res = ((1+(vl/v_))*log((1+pow(vl/v_, 2.))/pow(vl/v_, 2.))-1.)/(1+pow(vl/v_, 2))/pi;
+	res = gsl_sf_gamma_inc (0.0001, pow((double) vl, 2) / v_/v_/2.);
 
-	if (isnan(res))	{
-		cout << "vl -- "<< vl << ", v_ -- "<< v_ << endl;
-		exit(0);
-	}
+
+//	if (isnan(res))	{
+//		cout << "vl -- "<< vl << ", v_ -- "<< v_ << endl;
+//		exit(0);
+//	}
 	
 //	res = abs(res);
 	if (res < 0)
