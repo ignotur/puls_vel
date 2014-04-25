@@ -24,7 +24,10 @@ double integ (double *, double);
 double model (double vl, double v_)	{
 double res;
 
-	res = ((1+(vl/v_))*log((1+pow(vl/v_, 2.))/pow(vl/v_, 2.))-1.)/(1+pow(vl/v_, 2))/pi;
+//	res = ((1+(vl/v_))*log((1+pow(vl/v_, 2.))/pow(vl/v_, 2.))-1.)/(1+pow(vl/v_, 2))/pi;
+
+	res = -4./pi/v_ *( log( (vl/v_) / sqrt(1+ vl*vl/v_/ v_) ) - 0.5/(1.+ vl*vl/ v_ / v_) );
+
 
 	if (isnan(res))	{
 		cout << "vl -- "<< vl << ", v_ -- "<< v_ << endl;
