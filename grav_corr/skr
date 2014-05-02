@@ -4,5 +4,5 @@
 	do
 	let s=5*10**5+$i*2*10**6
 	./a.out $s $1
-	mv vel.txt vel_det_$1_$i.txt
+	mv vel.txt vel_det_x_$1_$i.txt
 	done

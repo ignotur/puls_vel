@@ -55,8 +55,8 @@ cout << "Time is -- " << t <<", v_init -- "<<v_init << endl;
 		pos[2] = 0;
 //		vel_generator(&vel[0]);
 //		t = t_generator ();		
-		vel[0] = 0;
-		vel[1] = 225 *  1e5/lsec*lcm; 
+		vel[1] = 0;
+		vel[0] = 225 *  1e5/lsec*lcm; 
 		vel[2] = v_init *1e5/lsec*lcm;
 
 		//t = 1e7;

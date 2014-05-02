@@ -12,7 +12,7 @@ double sigma_DM = 15.;
 
 
 extern "C" {
-void dmdsm_ (double *l, double *b, int *ndir, double *dmpsr, double *dist, char *limit, double *sm, double *smtau, double *smtheta);
+void dmdsm_ (float *l, float *b, int *ndir, float *dmpsr, float *dist, char *limit, float *sm, float *smtau, float *smtheta, float *smiso);
 }
 
 void profile  (double * dist, double * prmot, double * res);
@@ -131,13 +131,9 @@ return res;
 // dist[0] - center and dist[1] - sigma if given,
 // otherwise use TC93 model of electron density
 //----------------------------------------------------------- 
-
 double pdf_dist (double * dist, double D)	{
 double res, parallax;
 double DM2, R, l, b;
-
-
-
 
 res = 1;
 
@@ -146,7 +142,7 @@ res = 1;
 	else if (dist[1] != -1 && dist[2] != -1 && D < 1./dist[0])  
 		res = 1./pow(D,2.) * exp(-0.5 * pow(dist[0] - 1/D, 2) / pow (dist[2], 2));
 	else 
-		res = 1./pow(D,2.) * exp(-0.5 * pow(dist[0] - D, 2) / pow (0.2*dist[0], 2));
+		res = pdf_dist_fast (dist, D);
 
 	if (dist[3] != -1 && dist[4] != -1 && dist[5] != -1 && dist[6] != -1) 
 		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4])) * 0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
@@ -163,34 +159,11 @@ res = 1;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	if (isnan(D) || isinf(D))	{
 		cout << "The function pdf_dist obtained D which is "<<D<<endl;
 		exit(6);	
 	}
 
-	if (dist[1] != -1)  		{	// We base on the analytical form of the Gaussian
-		parallax = 1./D;
-		res = 1./(dist[1]*sqrt(pi*2)) * exp (-pow(parallax - dist[0], 2)/(2.*pow(dist[1], 2.))); 
-	}
-	else		{	// We find appropriate for D DM and then compare it with the actual DM 
-		res = pdf_dist_fast (dist, D);	
-
-	}
 
 return res;
 }
@@ -198,19 +171,18 @@ return res;
 
 double pdf_dist_fast (double * dist, double D) {
 double res, z;
-double DM1, DM2, dist1, dist2;
-double sm, smtau, smtheta;
+float DM1, DM2, dist1, dist2;
+float sm, smtau, smtheta, smiso;
 char limit;
 double static dist_in_use [10];
 double static pdf_at_dist [300];
 double intpart, fractpart;
 double probl, probr;
-double l,b, Dcompar;
+float l,b; 
+double Dcompar;
 int ndir;
 ndir = -1;
 z = 1.77;
-
-//cout<<D<<" - here"<<endl;
 
 	if (compare(dist, &dist_in_use[0]))	{
 		fractpart = modf (D/0.05, &intpart);
@@ -235,12 +207,16 @@ z = 1.77;
 
 		for (int i=0; i < 300; i++)	{
 			dist2 = i*0.05;
-			
+		
+	
+	//	cout << i<< "\t" << DM1 << "\t" << DM2 << endl;
+
+	
 			if (i==0)
 				dist2 = 0.001;
 				
-			dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta);	
-			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
+			dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta, &smiso);	
+			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta, &smiso);
 	
 			res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
 		
@@ -251,8 +227,10 @@ z = 1.77;
 		}
 
 		dist2 = D;
-		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
-
+//cout<< "Here" << "\t" << dist2 <<endl;
+//		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
+		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta, &smiso);
+//cout<< "Here" << endl;	
 		res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
 		
 		if (D*cos(b)>15.)
@@ -264,6 +242,8 @@ z = 1.77;
 
 return res;
 }
+
+
 
 bool   compare       (double * a, double * b)	{
 bool flag;

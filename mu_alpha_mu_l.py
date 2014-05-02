@@ -2,15 +2,18 @@
 import string
 from math import *
 
-file = open('prmot_init.txt')
+file = open('prmot_pr_init.txt')
 
-file_res = open('prmot.txt', 'w')
+file_res = open('prmot_pr.txt', 'w')
 
 alpha_G = radians(192.85948)
 delta_G = radians(27.12825)
 l_omega = radians(32.93192)
 
 for line in file.readlines():
+
+	# File should contain RAJD DecJD PMRA PMDec PML PMB with errors
+
 	values = string.split(line)
 	alpha = radians(float (values[4]))
 	delta = radians(float (values[5]))
