@@ -12,7 +12,7 @@ double sigma_DM = 15.;
 
 
 extern "C" {
-void dmdsm_ (double *l, double *b, int *ndir, double *dmpsr, double *dist, char *limit, double *sm, double *smtau, double *smtheta);
+void dmdsm_ (float *l, float *b, int *ndir, float *dmpsr, float *dist, char *limit, float *sm, float *smtau, float *smtheta, float *smiso);
 }
 
 void profile  (double * dist, double * prmot, double * res);
