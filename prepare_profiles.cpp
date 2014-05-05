@@ -146,6 +146,10 @@ res = 1;
 
 	if (dist[3] != -1 && dist[4] != -1 && dist[5] != -1 && dist[6] != -1) 
 		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4])) * 0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
+	else if (dist[3] != -1 && dist[4] != -1)
+		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4]));
+	else if (dist[5] != -1 && dist[6] != -1)
+		res *=  0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
 
 	l = dist[8] * pi/180.;
 	b = dist[9] * pi/180.;
