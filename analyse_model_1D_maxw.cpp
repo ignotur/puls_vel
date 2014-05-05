@@ -84,7 +84,7 @@ stringstream name;
 string name_str;
 int static i=0, counter;
 
-	v_ = x[0] * 1000. + 100;
+	v_ = x[0] * 1000. + 10.;
 //	sigma_2 = x[1] * 1000.;
 //	w = x[2];
 
