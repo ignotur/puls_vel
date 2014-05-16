@@ -45,7 +45,7 @@ evidence:
 		g++ evidence.cpp analyse_model_2D_maxw.cpp fun_apriory_energy_maxw.cpp -o evidence_2D_maxw_energy.out
 		g++ evidence.cpp analyse_model_2D_maxw.cpp fun_apriory_flat.cpp        -o evidence_2D_maxw_flat.out
 		g++ evidence.cpp analyse_model_1D_norm.cpp fun_apriory_energy_norm.cpp -o evidence_1D_norm_energy.out  -I/opt/local/include -L/opt/local/lib -lgsl -lgslcblas
-		g++ evidence.cpp analyse_model_1D_norm.cpp fun_apriory_flat.cpp        -o evidence_1D_norm_flat.out  -I/opt/local/include -L/opt/local/lib -lgsl -lgslcblas
+		g++ evidence.cpp analyse_model_1D_norm.cpp fun_apriory_flat.cpp        -o evidence_1D_norm_flat.out    -I/opt/local/include -L/opt/local/lib -lgsl -lgslcblas
 		g++ evidence.cpp analyse_model_2D_norm.cpp fun_apriory_energy_norm.cpp -o evidence_2D_norm_energy.out   -I/opt/local/include -L/opt/local/lib -lgsl -lgslcblas
 		g++ evidence.cpp analyse_model_2D_norm.cpp fun_apriory_flat.cpp        -o evidence_2D_norm_flat.out  -I/opt/local/include -L/opt/local/lib -lgsl -lgslcblas
 		g++ evidence.cpp analyse_model_1D_pach.cpp fun_apriory_energy_pach.cpp -o evidence_1D_pach_energy.out
@@ -56,8 +56,21 @@ evidence:
 		g++ evidence.cpp analyse_model_1D_uni.cpp  fun_apriory_flat.cpp        -o evidence_1D_uni_flat.out
 		g++ evidence.cpp analyse_model_2D_uni.cpp  fun_apriory_energy_uni.cpp  -o evidence_2D_uni_energy.out
 		g++ evidence.cpp analyse_model_2D_uni.cpp  fun_apriory_flat.cpp        -o evidence_2D_uni_flat.out
-		g++ evidence_sum_maxw.cpp fun_apriory_flat_sum.cpp   analyse_model_1D_sum_maxw.cpp -o evidence_1D_sum_maxw_flat.out
+		g++ evidence_sum_maxw.cpp fun_apriory_flat_sum.cpp   analyse_model_1D_sum_maxw.cpp   -o evidence_1D_sum_maxw_flat.out
+		g++ evidence_sum_maxw.cpp fun_apriory_energy_sum.cpp   analyse_model_1D_sum_maxw.cpp -o evidence_1D_sum_maxw_energy.out
+		g++ evidence_sum_maxw.cpp fun_apriory_flat_sum.cpp analyse_model_2D_sum_maxw.cpp     -o evidence_2D_sum_maxw_flat.out
 		g++ evidence_sum_maxw.cpp fun_apriory_energy_sum.cpp analyse_model_2D_sum_maxw.cpp -o evidence_2D_sum_maxw_energy.out
+credential:
+		g++ cred_intervals.cpp analyse_model_1D_maxw.cpp -o credential_1D_maxw.out 
+		g++ cred_intervals.cpp analyse_model_2D_maxw.cpp -o credential_2D_maxw.out 
+		g++ cred_intervals.cpp analyse_model_1D_norm.cpp -o credential_1D_norm.out   -I/opt/local/include -L/opt/local/lib -lgsl -lgslcblas  
+		g++ cred_intervals.cpp analyse_model_2D_norm.cpp -o credential_2D_norm.out   -I/opt/local/include -L/opt/local/lib -lgsl -lgslcblas
+		g++ cred_intervals.cpp analyse_model_1D_pach.cpp -o credential_1D_pach.out 
+		g++ cred_intervals.cpp analyse_model_2D_pach.cpp -o credential_2D_pach.out 
+		g++ cred_intervals_sum_maxw.cpp analyse_model_1D_sum_maxw.cpp -o credential_1D_sum_maxw.out
+		g++ cred_intervals_sum_maxw.cpp analyse_model_2D_sum_maxw.cpp -o credential_2D_sum_maxw.out
+
+
 
 
 
