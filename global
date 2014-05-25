@@ -1,0 +1,414 @@
+#!/bin/bash
+
+logname=`date +"%H%M_%d%m%Y"`
+touch start_${logname}.log
+
+echo "We started making directories" >> start_${logname}.log
+
+mkdir parametric
+mkdir non-parametric
+mkdir parametric/NE2001
+mkdir parametric/NE2001/1D
+mkdir parametric/NE2001/1D_joint 
+mkdir parametric/NE2001/2D
+mkdir parametric/TC93thick
+mkdir parametric/TC93thick/1D
+mkdir parametric/TC93thick/1D_joint
+mkdir parametric/TC93thick/2D
+mkdir parametric/NE2001/1D/fl
+mkdir parametric/NE2001/1D/fy
+mkdir parametric/NE2001/1D/yrs
+mkdir parametric/NE2001/1D/yre
+mkdir parametric/NE2001/1D/yri
+mkdir parametric/NE2001/1D_joint/fl
+mkdir parametric/NE2001/1D_joint/fy
+mkdir parametric/NE2001/1D_joint/yrs
+mkdir parametric/NE2001/1D_joint/yre
+mkdir parametric/NE2001/1D_joint/yri
+mkdir parametric/NE2001/2D/fl
+mkdir parametric/NE2001/2D/fy
+mkdir parametric/NE2001/2D/yrs
+mkdir parametric/NE2001/2D/yre
+mkdir parametric/NE2001/2D/yri
+mkdir parametric/TC93thick/1D/fl
+mkdir parametric/TC93thick/1D/fy
+mkdir parametric/TC93thick/1D/yrs
+mkdir parametric/TC93thick/1D/yre
+mkdir parametric/TC93thick/1D/yri
+mkdir parametric/TC93thick/1D_joint/fl
+mkdir parametric/TC93thick/1D_joint/fy
+mkdir parametric/TC93thick/1D_joint/yrs
+mkdir parametric/TC93thick/1D_joint/yre
+mkdir parametric/TC93thick/1D_joint/yri
+mkdir parametric/TC93thick/2D/fl
+mkdir parametric/TC93thick/2D/fy
+mkdir parametric/TC93thick/2D/yrs
+mkdir parametric/TC93thick/2D/yre
+mkdir parametric/TC93thick/2D/yri
+mkdir non-parametric/NE2001
+mkdir non-parametric/NE2001/1D
+mkdir non-parametric/NE2001/1D_joint 
+mkdir non-parametric/NE2001/2D
+mkdir non-parametric/TC93thick
+mkdir non-parametric/TC93thick/1D
+mkdir non-parametric/TC93thick/1D_joint
+mkdir non-parametric/TC93thick/2D
+mkdir non-parametric/NE2001/1D/fl
+mkdir non-parametric/NE2001/1D/fy
+mkdir non-parametric/NE2001/1D/yrs
+mkdir non-parametric/NE2001/1D/yre
+mkdir non-parametric/NE2001/1D/yri
+mkdir non-parametric/NE2001/1D_joint/fl
+mkdir non-parametric/NE2001/1D_joint/fy
+mkdir non-parametric/NE2001/1D_joint/yrs
+mkdir non-parametric/NE2001/1D_joint/yre
+mkdir non-parametric/NE2001/1D_joint/yri
+mkdir non-parametric/NE2001/2D/fl
+mkdir non-parametric/NE2001/2D/fy
+mkdir non-parametric/NE2001/2D/yrs
+mkdir non-parametric/NE2001/2D/yre
+mkdir non-parametric/NE2001/2D/yri
+mkdir non-parametric/TC93thick/1D/fl
+mkdir non-parametric/TC93thick/1D/fy
+mkdir non-parametric/TC93thick/1D/yrs
+mkdir non-parametric/TC93thick/1D/yre
+mkdir non-parametric/TC93thick/1D/yri
+mkdir non-parametric/TC93thick/1D_joint/fl
+mkdir non-parametric/TC93thick/1D_joint/fy
+mkdir non-parametric/TC93thick/1D_joint/yrs
+mkdir non-parametric/TC93thick/1D_joint/yre
+mkdir non-parametric/TC93thick/1D_joint/yri
+mkdir non-parametric/TC93thick/2D/fl
+mkdir non-parametric/TC93thick/2D/fy
+mkdir non-parametric/TC93thick/2D/yrs
+mkdir non-parametric/TC93thick/2D/yre
+mkdir non-parametric/TC93thick/2D/yri
+
+echo "We finished making directories" >> start_${logname}.log
+
+ls -lR >> start_${logname}.log
+
+echo 'We are copying NE2001' >> start_${logname}.log 
+
+a=`ls parametric/NE2001/*/fl`
+for s in $a
+do
+s_=${s%?}
+cp ../catalogue/fl_dist.txt $s_ 
+cp ../catalogue/fl_prmot.txt $s_
+done
+
+a=`ls parametric/NE2001/*/fy`
+for s in $a
+do
+s_=${s%?}
+cp ../catalogue/fy_dist.txt $s_ 
+cp ../catalogue/fy_prmot.txt $s_
+done
+
+a=`ls parametric/NE2001/*/yrs`
+for s in $a
+do
+s_=${s%?}
+cp ../catalogue/yrs_dist.txt $s_ 
+cp ../catalogue/yrs_prmot.txt $s_
+done
+
+a=`ls parametric/NE2001/*/yre`
+for s in $a
+do
+s_=${s%?}
+cp ../catalogue/yre_dist.txt $s_ 
+cp ../catalogue/yre_prmot.txt $s_
+done
+
+a=`ls parametric/NE2001/*/yri`
+for s in $a
+do
+s_=${s%?}
+cp ../catalogue/yrs_dist.txt $s_ 
+cp ../catalogue/yrs_prmot.txt $s_
+done
+
+echo 'We are copying TC93thick' >> start_${logname}.log 
+
+a=`ls parametric/TC93thick/*/fl`
+for s in $a
+do
+s_=${s%?}
+cp ../catalogue/fl_sch_dist.txt $s_ 
+cp ../catalogue/fl_sch_prmot.txt $s_
+done
+
+a=`ls parametric/TC93thick/*/fy`
+for s in $a
+do
+s_=${s%?}
+cp ../catalogue/fy_sch_dist.txt $s_ 
+cp ../catalogue/fy_sch_prmot.txt $s_
+done
+
+a=`ls parametric/TC93thick/*/yrs`
+for s in $a
+do
+s_=${s%?}
+cp ../catalogue/yrs_sch_dist.txt $s_ 
+cp ../catalogue/yrs_sch_prmot.txt $s_
+done
+
+a=`ls parametric/TC93thick/*/yre`
+for s in $a
+do
+s_=${s%?}
+cp ../catalogue/yre_sch_dist.txt $s_ 
+cp ../catalogue/yre_sch_prmot.txt $s_
+done
+
+a=`ls parametric/TC93thick/*/yri`
+for s in $a
+do
+s_=${s%?}
+cp ../catalogue/yrs_sch_dist.txt $s_ 
+cp ../catalogue/yrs_sch_prmot.txt $s_
+done
+
+echo 'We are copying programs for NE2001 electron density model' >> start_${logname}.log 
+
+cp ../../brisken/prepare_profiles_1D.out  parametric/NE2001/1D/fl
+cp ../../brisken/prepare_profiles_1D.out  parametric/NE2001/1D/fy
+cp ../../brisken/prepare_profiles_1D.out  parametric/NE2001/1D/yrs
+cp ../../brisken/prepare_profiles_1D.out  parametric/NE2001/1D/yre
+cp ../../brisken/prepare_profiles_yri.out parametric/NE2001/1D/yri
+
+cp ../../brisken/prepare_profiles_1D_joint.out  parametric/NE2001/1D_joint/fl
+cp ../../brisken/prepare_profiles_1D_joint.out  parametric/NE2001/1D_joint/fy
+cp ../../brisken/prepare_profiles_1D_joint.out  parametric/NE2001/1D_joint/yrs
+cp ../../brisken/prepare_profiles_1D_joint.out  parametric/NE2001/1D_joint/yre
+cp ../../brisken/prepare_profiles_yri_joint.out parametric/NE2001/1D_joint/yri
+
+cp ../../brisken/prepare_profiles_2D.out     parametric/NE2001/2D/fl
+cp ../../brisken/prepare_profiles_2D.out     parametric/NE2001/2D/fy
+cp ../../brisken/prepare_profiles_2D.out     parametric/NE2001/2D/yrs
+cp ../../brisken/prepare_profiles_2D.out     parametric/NE2001/2D/yre
+cp ../../brisken/prepare_profiles_2D_yri.out parametric/NE2001/2D/yri
+
+echo 'We are copying programs for M2 electron density model' >> start_${logname}.log 
+
+cp ../../brisken/prepare_profiles_1D_sch.out  parametric/TC93thick/1D/fl
+cp ../../brisken/gal.dat                      parametric/TC93thick/1D/fl
+cp ../../brisken/prepare_profiles_1D_sch.out  parametric/TC93thick/1D/fy
+cp ../../brisken/gal.dat                      parametric/TC93thick/1D/fy
+cp ../../brisken/prepare_profiles_1D_sch.out  parametric/TC93thick/1D/yrs
+cp ../../brisken/gal.dat                      parametric/TC93thick/1D/yrs
+cp ../../brisken/prepare_profiles_1D_sch.out  parametric/TC93thick/1D/yre
+cp ../../brisken/gal.dat                      parametric/TC93thick/1D/yre
+cp ../../brisken/prepare_profiles_yri_sch.out parametric/TC93thick/1D/yri
+cp ../../brisken/gal.dat                      parametric/TC93thick/1D/yri
+
+cp ../../brisken/prepare_profiles_1D_joint_sch.out  parametric/TC93thick/1D_joint/fl
+cp ../../brisken/gal.dat                      parametric/TC93thick/1D_joint/fl
+cp ../../brisken/prepare_profiles_1D_joint_sch.out  parametric/TC93thick/1D_joint/fy
+cp ../../brisken/gal.dat                      parametric/TC93thick/1D_joint/fy
+cp ../../brisken/prepare_profiles_1D_joint_sch.out  parametric/TC93thick/1D_joint/yrs
+cp ../../brisken/gal.dat                      parametric/TC93thick/1D_joint/yrs
+cp ../../brisken/prepare_profiles_1D_joint_sch.out  parametric/TC93thick/1D_joint/yre
+cp ../../brisken/gal.dat                      parametric/TC93thick/1D_joint/yre
+cp ../../brisken/prepare_profiles_yri_joint_sch.out parametric/TC93thick/1D_joint/yri
+cp ../../brisken/gal.dat                      parametric/TC93thick/1D_joint/yri
+
+cp ../../brisken/prepare_profiles_2D_sch.out     parametric/TC93thick/2D/fl
+cp ../../brisken/gal.dat                         parametric/TC93thick/2D/fl
+cp ../../brisken/prepare_profiles_2D_sch.out     parametric/TC93thick/2D/fy
+cp ../../brisken/gal.dat                         parametric/TC93thick/2D/fy
+cp ../../brisken/prepare_profiles_2D_sch.out     parametric/TC93thick/2D/yrs
+cp ../../brisken/gal.dat                         parametric/TC93thick/2D/yrs
+cp ../../brisken/prepare_profiles_2D_sch.out     parametric/TC93thick/2D/yre
+cp ../../brisken/gal.dat                         parametric/TC93thick/2D/yre
+cp ../../brisken/prepare_profiles_2D_yri_sch.out parametric/TC93thick/2D/yri
+cp ../../brisken/gal.dat                         parametric/TC93thick/2D/yri
+
+echo 'We are copying programs for analysis of model' >> start_${logname}.log 
+
+a=`ls -d parametric/*/1D*/*`
+#parametric/*/1D*/*
+for s in $a
+do
+#s_=${s%?}
+
+echo $s
+cp ../../brisken/analyse_model_1D_*.out $s 
+cp ../../brisken/evidence_1D_*.out      $s
+cp ../../brisken/credential_1D_*.out    $s
+cp ../../brisken/skr_analysis_inside    $s
+done
+
+a=`ls -d parametric/*/2D*/*`
+for s in $a
+do
+#s_=${s%?}
+
+echo $s
+cp ../../brisken/analyse_model_2D_*.out $s 
+cp ../../brisken/evidence_2D_*.out      $s
+cp ../../brisken/credential_2D_*.out    $s
+cp ../../brisken/skr_analysis_inside    $s
+done
+
+echo "We analyse data based on NE2001 electron denstity model" >>  start_${logname}.log
+
+cd parametric/NE2001/1D/fl/
+./skr_analysis_inside 
+cd ../fy/
+./skr_analysis_inside
+cd ../yrs/
+./skr_analysis_inside
+cd ../yre/
+./skr_analysis_inside
+cd ../yri/
+./skr_analysis_inside
+
+cd ../../1D_joint/fl
+cp -r ../../1D/fl/profiles/ .
+./skr_analysis_inside
+cd ../fy
+cp -r ../../1D/fy/profiles/ .
+./skr_analysis_inside
+cd ../yrs
+cp -r ../../1D/yrs/profiles/ .
+./skr_analysis_inside
+cd ../yre
+cp -r ../../1D/yre/profiles/ .
+./skr_analysis_inside
+cd ../yri
+cp -r ../../1D/yri/profiles/ .
+./skr_analysis_inside
+
+cd ../../2D/fl
+./skr_analysis_inside 
+cd ../fy/
+./skr_analysis_inside
+cd ../yrs/
+./skr_analysis_inside
+cd ../yre/
+./skr_analysis_inside
+cd ../yri/
+./skr_analysis_inside
+
+echo "We analyse data based on TC93 model" >>  start_${logname}.log
+
+cd ../../TC93thick/1D/fl
+./skr_analysis_inside 
+cd ../fy/
+./skr_analysis_inside
+cd ../yrs/
+./skr_analysis_inside
+cd ../yre/
+./skr_analysis_inside
+cd ../yri/
+./skr_analysis_inside
+
+
+cd ../../1D_joint/fl
+cp -r ../../1D/fl/profiles/ .
+./skr_analysis_inside
+cd ../fy
+cp -r ../../1D/fy/profiles/ .
+./skr_analysis_inside
+cd ../yrs
+cp -r ../../1D/yrs/profiles/ .
+./skr_analysis_inside
+cd ../yre
+cp -r ../../1D/yre/profiles/ .
+./skr_analysis_inside
+cd ../yri
+cp -r ../../1D/yri/profiles/ .
+./skr_analysis_inside
+
+cd ../../2D/fl
+./skr_analysis_inside 
+cd ../fy/
+./skr_analysis_inside
+cd ../yrs/
+./skr_analysis_inside
+cd ../yre/
+./skr_analysis_inside
+cd ../yri/
+./skr_analysis_inside
+
+
+cd ../../../../
+
+echo " fl " > table.tex
+cat parametric/NE2001/1D/fl/table.tex >> table.tex
+echo " fy " > table.tex
+cat parametric/NE2001/1D/fy/table.tex >> table.tex
+echo " yrs " > table.tex
+cat parametric/NE2001/1D/yrs/table.tex >> table.tex
+echo " yre " > table.tex
+cat parametric/NE2001/1D/yre/table.tex >> table.tex
+echo " yri " > table.tex
+cat parametric/NE2001/1D/yri/table.tex >> table.tex
+echo "\hline"
+
+echo " fl " > table.tex
+cat parametric/NE2001/1D_joint/fl/table.tex >> table.tex
+echo " fy " > table.tex
+cat parametric/NE2001/1D_joint/fy/table.tex >> table.tex
+echo " yrs " > table.tex
+cat parametric/NE2001/1D_joint/yrs/table.tex >> table.tex
+echo " yre " > table.tex
+cat parametric/NE2001/1D_joint/yre/table.tex >> table.tex
+echo " yri " > table.tex
+cat parametric/NE2001/1D_joint/yri/table.tex >> table.tex
+echo "\hline"
+
+echo " fl " > table.tex
+cat parametric/NE2001/2D/fl/table.tex >> table.tex
+echo " fy " > table.tex
+cat parametric/NE2001/2D/fy/table.tex >> table.tex
+echo " yrs " > table.tex
+cat parametric/NE2001/2D/yrs/table.tex >> table.tex
+echo " yre " > table.tex
+cat parametric/NE2001/2D/yre/table.tex >> table.tex
+echo " yri " > table.tex
+cat parametric/NE2001/2D/yri/table.tex >> table.tex
+echo "\hline"
+
+
+echo " fl " > table.tex
+cat parametric/TC93thick/1D/fl/table.tex >> table.tex
+echo " fy " > table.tex
+cat parametric/TC93thick/1D/fy/table.tex >> table.tex
+echo " yrs " > table.tex
+cat parametric/TC93thick/1D/yrs/table.tex >> table.tex
+echo " yre " > table.tex
+cat parametric/TC93thick/1D/yre/table.tex >> table.tex
+echo " yri " > table.tex
+cat parametric/TC93thick/1D/yri/table.tex >> table.tex
+echo "\hline"
+
+echo " fl " > table.tex
+cat parametric/TC93thick/1D_joint/fl/table.tex >> table.tex
+echo " fy " > table.tex
+cat parametric/TC93thick/1D_joint/fy/table.tex >> table.tex
+echo " yrs " > table.tex
+cat parametric/TC93thick/1D_joint/yrs/table.tex >> table.tex
+echo " yre " > table.tex
+cat parametric/TC93thick/1D_joint/yre/table.tex >> table.tex
+echo " yri " > table.tex
+cat parametric/TC93thick/1D_joint/yri/table.tex >> table.tex
+echo "\hline"
+
+echo " fl " > table.tex
+cat parametric/TC93thick/2D/fl/table.tex >> table.tex
+echo " fy " > table.tex
+cat parametric/TC93thick/2D/fy/table.tex >> table.tex
+echo " yrs " > table.tex
+cat parametric/TC93thick/2D/yrs/table.tex >> table.tex
+echo " yre " > table.tex
+cat parametric/TC93thick/2D/yre/table.tex >> table.tex
+echo " yri " > table.tex
+cat parametric/TC93thick/2D/yri/table.tex >> table.tex
+echo "\hline"
+
+
