@@ -222,6 +222,8 @@ z = 1.77;
 			dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta, &smiso);	
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta, &smiso);
 	
+			sigma_DM = 0.2 * DM1;
+
 			res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
 		
 			if (i*0.05*cos(b)>15.)
@@ -234,7 +236,10 @@ z = 1.77;
 //cout<< "Here" << "\t" << dist2 <<endl;
 //		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta, &smiso);
-//cout<< "Here" << endl;	
+//cout<< "Here" << endl;
+		
+		sigma_DM = 0.2 * DM1;		
+
 		res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
 		
 		if (D*cos(b)>15.)

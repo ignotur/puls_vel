@@ -255,6 +255,7 @@ cp ../../brisken/skr_analysis_inside    $s
 done
 
 echo "We analyse data based on NE2001 electron denstity model" >>  start_${logname}.log
+echo "1D folder" >>  start_${logname}.log
 
 cd parametric/NE2001/1D/fl/
 ./skr_analysis_inside 
@@ -266,6 +267,8 @@ cd ../yre/
 ./skr_analysis_inside
 cd ../yri/
 ./skr_analysis_inside
+
+echo "1D joint folder" >>  start_${logname}.log
 
 cd ../../1D_joint/fl
 cp -r ../../1D/fl/profiles/ .
@@ -282,6 +285,8 @@ cp -r ../../1D/yre/profiles/ .
 cd ../yri
 cp -r ../../1D/yri/profiles/ .
 ./skr_analysis_inside
+
+echo "2D folder" >>  start_${logname}.log
 
 cd ../../2D/fl
 ./skr_analysis_inside 
@@ -295,8 +300,9 @@ cd ../yri/
 ./skr_analysis_inside
 
 echo "We analyse data based on TC93 model" >>  start_${logname}.log
+echo "1D folder" >>  start_${logname}.log
 
-cd ../../TC93thick/1D/fl
+cd ../../../TC93thick/1D/fl
 ./skr_analysis_inside 
 cd ../fy/
 ./skr_analysis_inside
@@ -308,6 +314,7 @@ cd ../yri/
 ./skr_analysis_inside
 
 
+echo "1D joint folder" >>  start_${logname}.log
 cd ../../1D_joint/fl
 cp -r ../../1D/fl/profiles/ .
 ./skr_analysis_inside
@@ -324,6 +331,8 @@ cd ../yri
 cp -r ../../1D/yri/profiles/ .
 ./skr_analysis_inside
 
+echo "2D folder" >>  start_${logname}.log
+
 cd ../../2D/fl
 ./skr_analysis_inside 
 cd ../fy/
@@ -335,6 +344,7 @@ cd ../yre/
 cd ../yri/
 ./skr_analysis_inside
 
+echo "We have finished analysis in all catalogues." >>  start_${logname}.log
 
 cd ../../../../
 
