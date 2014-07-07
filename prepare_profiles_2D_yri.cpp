@@ -147,22 +147,22 @@ res = 1;
 	else 
 		res = pdf_dist_fast (dist, D);
 
-	if (dist[3] != -1 && dist[4] != -1 && dist[5] != -1 && dist[6] != -1) 
-		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4])) * 0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
-	else if (dist[3] != -1 && dist[4] != -1)
-		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4]));
-	else if (dist[5] != -1 && dist[6] != -1)
-		res *=  0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
+//	if (dist[3] != -1 && dist[4] != -1 && dist[5] != -1 && dist[6] != -1) 
+//		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4])) * 0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
+//	else if (dist[3] != -1 && dist[4] != -1)
+//		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4]));
+//	else if (dist[5] != -1 && dist[6] != -1)
+//		res *=  0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
 
 	l = dist[8] * pi/180.;
 	b = dist[9] * pi/180.;
 
-	R = sqrt(8.5*8.5 + pow(D*cos(b), 2) - 2*8.5*D*cos(b)*cos(l));
+//	R = sqrt(8.5*8.5 + pow(D*cos(b), 2) - 2*8.5*D*cos(b)*cos(l));
 
-	res *= pow(R/8.5, 1.9) * pow(D, 2) * exp(-abs(D*sin(b))/0.330 - 5*(R - 8.5)/8.5);
+//	res *= pow(R/8.5, 1.9) * pow(D, 2) * exp(-abs(D*sin(b))/0.330 - 5*(R - 8.5)/8.5);
 
-	if (dist[7] != -1)
-		res *= 1./D * exp(-0.5*pow((log10(dist[7])+2*log10(D)+1.1)/0.9 ,2)); 
+//	if (dist[7] != -1)
+//		res *= 1./D * exp(-0.5*pow((log10(dist[7])+2*log10(D)+1.1)/0.9 ,2)); 
 
 
 
@@ -240,7 +240,7 @@ z = 1.77;
 //		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta, &smiso);
 //cout<< "Here" << endl;	
-		
+
 		sigma_DM = 0.4 * DM1;
 
 		res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));

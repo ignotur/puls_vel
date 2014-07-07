@@ -222,7 +222,7 @@ z = 1.77;
 			dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta, &smiso);	
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta, &smiso);
 	
-			sigma_DM = 0.2 * DM1;
+			sigma_DM = 0.4 * DM1;
 
 			res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
 		
@@ -238,7 +238,7 @@ z = 1.77;
 		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta, &smiso);
 //cout<< "Here" << endl;
 		
-		sigma_DM = 0.2 * DM1;		
+		sigma_DM = 0.4 * DM1;		
 
 		res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
 		
@@ -429,9 +429,9 @@ vl = sign_v * vl;
 
 	for (int i=1; i < 15000; i++)	{
 		D = (double) i * h;
-		lf = h * pdf_dist(entry_dist, D)         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D )      /dang2vel , mu_c, mu_s ); 
-		lc = h * pdf_dist(entry_dist, D + 0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h))/dang2vel , mu_c, mu_s );
-		lr = h * pdf_dist(entry_dist, D + 1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h))/dang2vel , mu_c, mu_s );
+		lf = h * pdf_dist(entry_dist, D)         / D          * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D )      /dang2vel , mu_c, mu_s ); 
+		lc = h * pdf_dist(entry_dist, D + 0.5*h) / (D+0.5*h)  * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h))/dang2vel , mu_c, mu_s );
+		lr = h * pdf_dist(entry_dist, D + 1.0*h) / (D+1.0*h)  * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h))/dang2vel , mu_c, mu_s );
 		sum += (lf + 4 * lc + lr) / 6.;
 	}
 

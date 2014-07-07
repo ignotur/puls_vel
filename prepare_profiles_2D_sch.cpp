@@ -12,7 +12,7 @@ double sigma_DM = 15.;
 
 
 extern "C" {
-void dmdsm_ (float *l, float *b, int *ndir, float *dmpsr, float *dist, char *limit, float *sm, float *smtau, float *smtheta, float *smiso);
+void dmdsm_ (float *l, float *b, int *ndir, float *dmpsr, float *dist, char *limit, float *sm, float *smtau, float *smtheta);
 }
 
 void profile  (double * dist, double * prmot, double * res);
@@ -222,8 +222,8 @@ z = 1.77;
 			if (i==0)
 				dist2 = 0.001;
 				
-			dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta, &smiso);	
-			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta, &smiso);
+			dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta);	
+			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 
 			sigma_DM = 0.4 * DM1;
 	
@@ -238,7 +238,7 @@ z = 1.77;
 		dist2 = D;
 //cout<< "Here" << "\t" << dist2 <<endl;
 //		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
-		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta, &smiso);
+		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 //cout<< "Here" << endl;	
 		
 		sigma_DM = 0.4 * DM1;

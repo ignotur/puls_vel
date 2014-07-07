@@ -125,9 +125,6 @@ res = 1./(mu_s*sqrt(pi*2)) * exp (-pow(mu_l - mu_c, 2)/(2.*pow(mu_s, 2.)));
 return res;
 }
 
-
-
-
 //-----------------------------------------------------------
 // This function computes probability that distance is
 // D. The parameters of the Gaussian distribution are
@@ -147,22 +144,22 @@ res = 1;
 	else 
 		res = pdf_dist_fast (dist, D);
 
-	if (dist[3] != -1 && dist[4] != -1 && dist[5] != -1 && dist[6] != -1) 
-		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4])) * 0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
-	else if (dist[3] != -1 && dist[4] != -1)
-		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4]));
-	else if (dist[5] != -1 && dist[6] != -1)
-		res *=  0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
+//	if (dist[3] != -1 && dist[4] != -1 && dist[5] != -1 && dist[6] != -1) 
+//		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4])) * 0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
+//	else if (dist[3] != -1 && dist[4] != -1)
+//		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4]));
+//	else if (dist[5] != -1 && dist[6] != -1)
+//		res *=  0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
 
 	l = dist[8] * pi/180.;
 	b = dist[9] * pi/180.;
 
-	R = sqrt(8.5*8.5 + pow(D*cos(b), 2) - 2*8.5*D*cos(b)*cos(l));
+//	R = sqrt(8.5*8.5 + pow(D*cos(b), 2) - 2*8.5*D*cos(b)*cos(l));
 
-	res *= pow(R/8.5, 1.9) * pow(D, 2) * exp(-abs(D*sin(b))/0.330 - 5*(R - 8.5)/8.5);
+//	res *= pow(R/8.5, 1.9) * pow(D, 2) * exp(-abs(D*sin(b))/0.330 - 5*(R - 8.5)/8.5);
 
-	if (dist[7] != -1)
-		res *= 1./D * exp(-0.5*pow((log10(dist[7])+2*log10(D)+1.1)/0.9 ,2)); 
+//	if (dist[7] != -1)
+//		res *= 1./D * exp(-0.5*pow((log10(dist[7])+2*log10(D)+1.1)/0.9 ,2)); 
 
 
 
@@ -240,7 +237,7 @@ z = 1.77;
 //		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta, &smiso);
 //cout<< "Here" << endl;	
-		
+
 		sigma_DM = 0.4 * DM1;
 
 		res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
@@ -254,12 +251,6 @@ z = 1.77;
 
 return res;
 }
-
-
-
-
-
-
 
 
 
@@ -418,7 +409,6 @@ double h, prob_c;
 double b, mu_c, mu_s, lf, lc, lr, D;
 double sign_v;
 double dang2vel;
-double v_l, v_b;
 
 dang2vel = 4.610573776;
 
@@ -430,23 +420,18 @@ h   = 0.001;
 
 
 b = entry_dist[9] * pi / 180.;
+mu_c = entry_prmot[0];
+mu_s = entry_prmot[1];
 
-mu_c = sqrt(pow(entry_prmot[0], 2.) + pow(entry_prmot[3], 2.));
-mu_s = sqrt(pow(entry_prmot[1], 2.) + pow(entry_prmot[4], 2.));
+sign_v = mu_c / abs(mu_c);
 
-sign_v = entry_prmot[0] / abs(entry_prmot[0]);
-
-v_l = abs(entry_prmot[0]) / mu_c * vl;
-v_b = abs(entry_prmot[3]) / mu_c * vl;
-
-v_l = sign_v * v_l;
-
+vl = sign_v * vl;
 
 	for (int i=1; i < 15000; i++)	{
 		D = (double) i * h;
-		lf = h * pdf_dist(entry_dist, D)         /D         * pdf_prmot( sqrt(pow(v_l + delta_vl(entry_dist, D), 2) + pow(v_b, 2))        / (D )      /dang2vel , mu_c, mu_s ); 
-		lc = h * pdf_dist(entry_dist, D + 0.5*h) /(D+0.5*h) * pdf_prmot( sqrt(pow(v_l + delta_vl(entry_dist, D + 0.5*h), 2) + pow (v_b,2))/((D+0.5*h))/dang2vel , mu_c, mu_s );
-		lr = h * pdf_dist(entry_dist, D + 1.0*h) /(D+1.0*h) * pdf_prmot( sqrt(pow(v_l + delta_vl(entry_dist, D + 1.0*h), 2) + pow (v_b,2))/((D+1.0*h))/dang2vel , mu_c, mu_s );
+		lf = h * pdf_dist(entry_dist, D)         /D         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D )      /dang2vel , mu_c, mu_s ); 
+		lc = h * pdf_dist(entry_dist, D + 0.5*h) /(D+0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h))/dang2vel , mu_c, mu_s );
+		lr = h * pdf_dist(entry_dist, D + 1.0*h) /(D+1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h))/dang2vel , mu_c, mu_s );
 		sum += (lf + 4 * lc + lr) / 6.;
 	}
 
