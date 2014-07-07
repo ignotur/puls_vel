@@ -1,0 +1,68 @@
+#!/bin/bash/
+
+##############################################
+## The first step, we prepare timing file   ##
+##############################################
+cat eq_timing_dist.txt >  timing_dist.txt
+cat ec_timing_dist.txt >> timing_dist.txt
+cat eq_timing_sch_dist.txt >  timing_sch_dist.txt
+cat ec_timing_sch_dist.txt >> timing_sch_dist.txt
+cat eq_timing_prmot.txt >  timing_prmot.txt
+cat ec_timing_prmot.txt >> timing_prmot.txt
+cat eq_timing_prmot.txt >  timing_sch_prmot.txt
+cat ec_timing_prmot.txt >> timing_sch_prmot.txt
+cat eq_timing_ages.dat > timing_ages.dat
+cat ec_timing_ages.dat >> timing_ages.dat
+
+##############################################
+## The second step, we prepare young file   ##
+##############################################
+./preprocessor.out interfer_prmot.txt interfer_dist.txt     interfer_ages.dat interfer_young_prmot.txt interfer_young_dist.txt
+./preprocessor.out interfer_prmot.txt interfer_sch_dist.txt interfer_ages.dat interfer_young_sch_prmot.txt interfer_young_sch_dist.txt
+./preprocessor.out timing_prmot.txt   timing_dist.txt       timing_ages.dat  timing_young_prmot.txt       timing_young_dist.txt
+./preprocessor.out timing_prmot.txt   timing_sch_dist.txt   timing_ages.dat  timing_young_sch_prmot.txt   timing_young_sch_dist.txt
+
+##############################################
+## The third step, we prepare fl catalogue  ##
+##############################################
+cat interfer_dist.txt > fl_dist.txt
+cat timing_dist.txt  >> fl_dist.txt 
+cat interfer_sch_dist.txt > fl_sch_dist.txt
+cat timing_sch_dist.txt  >> fl_sch_dist.txt 
+cat interfer_prmot.txt > fl_prmot.txt
+cat timing_prmot.txt  >> fl_prmot.txt
+cat interfer_prmot.txt > fl_sch_prmot.txt
+cat timing_prmot.txt  >> fl_sch_prmot.txt
+ 
+###############################################
+## The fourth step, we prepare fy catalogue  ##
+###############################################
+cat interfer_young_dist.txt > fy_dist.txt
+cat timing_young_dist.txt  >> fy_dist.txt 
+cat interfer_young_sch_dist.txt > fy_sch_dist.txt
+cat timing_young_sch_dist.txt  >> fy_sch_dist.txt 
+cat interfer_young_prmot.txt > fy_prmot.txt
+cat timing_young_prmot.txt  >> fy_prmot.txt
+cat interfer_young_prmot.txt > fy_sch_prmot.txt
+cat timing_young_prmot.txt  >> fy_sch_prmot.txt
+ 
+####################################################################
+## The fifth and seventh steps, we prepare yrs and yri catalogue  ##
+####################################################################
+cat interfer_young_dist.txt > yrs_dist.txt
+cat interfer_young_sch_dist.txt > yrs_sch_dist.txt
+cat interfer_young_prmot.txt > yrs_prmot.txt
+cat interfer_young_prmot.txt > yrs_sch_prmot.txt
+cat interfer_young_dist.txt > yri_dist.txt
+cat interfer_young_sch_dist.txt > yri_sch_dist.txt
+cat interfer_young_prmot.txt > yri_prmot.txt
+cat interfer_young_prmot.txt > yri_sch_prmot.txt
+
+###############################################
+## The sixth step, we prepare yre catalogue  ##
+###############################################
+cat interfer_dist.txt > yre_dist.txt
+cat interfer_sch_dist.txt > yre_sch_dist.txt
+cat interfer_prmot.txt > yre_prmot.txt
+cat interfer_prmot.txt > yre_sch_prmot.txt
+
