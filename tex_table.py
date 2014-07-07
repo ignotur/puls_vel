@@ -1,34 +1,45 @@
 #!/bin/python
 
 import string
+from decimal import *
 
-f = open('model.dat', 'r')
+f   = open('model.dat', 'r')
+res = open('table.tex', 'w')
 
-evid_energy_maxw = float(f.readline()) # energy maxw
-evid_flat_maxw   = float(f.readline()) # flat maxw
+evid_energy_maxw = Decimal(f.readline()) # energy maxw
+evid_flat_maxw   = Decimal(f.readline()) # flat maxw
 val_maxw         = f.readline() # the actual maximum value
 cred_maxw1	 = f.readline() # upper credential value
-cred_maxw2	 = f.readline() # lower credential value
+tmp=string.split (cred_maxw1)
+cred_maxw1 = tmp[0]
+cred_maxw2 = tmp[1]
+#cred_maxw2	 = f.readline() # lower credential value
 
-evid_energy_norm = float(f.readline()) # energy norm
-evid_flat_norm   = float(f.readline()) # flat norm
+evid_energy_norm = Decimal(f.readline()) # energy norm
+evid_flat_norm   = Decimal(f.readline()) # flat norm
 val_norm         = f.readline() # the actual maximum value
 cred_norm1	 = f.readline() # upper credential value
-cred_norm2	 = f.readline() # lower credential value
+tmp=string.split (cred_norm1)
+cred_norm1 = tmp[0]
+cred_norm2 = tmp[1]
+#cred_norm2	 = f.readline() # lower credential value
 
-evid_energy_pach = float(f.readline()) # energy pach
-evid_flat_pach   = float(f.readline()) # flat pach
+evid_energy_pach = Decimal(f.readline()) # energy pach
+evid_flat_pach   = Decimal(f.readline()) # flat pach
 val_pach         = f.readline() # the actual maximum value
 cred_pach1	 = f.readline() # upper credential value
-cred_pach2	 = f.readline() # lower credential value
+tmp=string.split (cred_pach1)
+cred_pach1 = tmp[0]
+cred_pach2 = tmp[1]
+#cred_pach2	 = f.readline() # lower credential value
 
-evid_energy_uni  = float(f.readline()) # energy uni
-evid_flat_uni    = float(f.readline()) # flat uni
+evid_energy_uni  = Decimal(f.readline()) # energy uni
+evid_flat_uni    = Decimal(f.readline()) # flat uni
 f.readline() # upper credential value
 f.readline() # lower credential value
 
-evid_energy_sum_maxw = float(f.readline()) # energy maxw
-evid_flat_sum_maxw   = float(f.readline()) # flat maxw
+evid_energy_sum_maxw = Decimal(f.readline()) # energy maxw
+evid_flat_sum_maxw   = Decimal(f.readline()) # flat maxw
 
 str_complex = f.readline() ## the actual maximum value for the sum of maxwellian
 
