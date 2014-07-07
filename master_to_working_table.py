@@ -4,7 +4,7 @@ import sys
 import subprocess
 
 master = open ('master.dat', 'r')
-ages   = open ('ages.dat', 'r')
+ages   = open ('interf_ages.dat', 'r')
 work   = open ('working.dat', 'w')
 names  = open ('names.dat', 'w')
 tex    = open ('puls_list', 'w')
@@ -124,12 +124,12 @@ for i in range (0, num_lines):
 		dist_m2 = float(output)
 		print name_1, "\t", parral, "\t", DM, "\t", dist_ne2001, "\t", dist_m2
 
-		dist_list.write(str(name_1)+"\t"+str(dist_ne2001)+"\t -1 \t -1\t "+ str(dlow)+"\t"+str(dlowe)+"\t"+str(dup)+"\t"+str(dupe)+"\t"+str(s14)+"\t"+str(degrees(l))+"\t"+str(degrees(b))+"\n")
-		dist_sch.write(str(name_1)+"\t"+str(dist_m2)+"\t -1 \t -1\t "+ str(dlow)+"\t"+str(dlowe)+"\t"+str(dup)+"\t"+str(dupe)+"\t"+str(s14)+"\t"+str(degrees(l))+"\t"+str(degrees(b))+"\n")
+		dist_list.write(str(dist_ne2001)+"\t -1 \t -1\t "+ str(dlow)+"\t"+str(dlowe)+"\t"+str(dup)+"\t"+str(dupe)+"\t"+str(s14)+"\t"+str(degrees(l))+"\t"+str(degrees(b))+"\n")
+		dist_sch.write(str(dist_m2)+"\t -1 \t -1\t "+ str(dlow)+"\t"+str(dlowe)+"\t"+str(dup)+"\t"+str(dupe)+"\t"+str(s14)+"\t"+str(degrees(l))+"\t"+str(degrees(b))+"\n")
 	
 	else:
-		dist_list.write(str(name_1)+"\t"+str(parral)+"\t"+ str(parrale) + "\t" + str(parrald)+ "\t "+ str(dlow)+"\t"+str(dlowe)+"\t"+str(dup)+"\t"+str(dupe)+"\t"+str(s14)+"\t"+str(degrees(l))+"\t"+str(degrees(b))+"\n")
-		dist_sch.write(str(name_1)+"\t"+str(parral)+"\t"+ str(parrale) + "\t" + str(parrald)+ "\t "+ str(dlow)+"\t"+str(dlowe)+"\t"+str(dup)+"\t"+str(dupe)+"\t"+str(s14)+"\t"+str(degrees(l))+"\t"+str(degrees(b))+"\n")
+		dist_list.write(str(parral)+"\t"+ str(parrale) + "\t" + str(parrald)+ "\t "+ str(dlow)+"\t"+str(dlowe)+"\t"+str(dup)+"\t"+str(dupe)+"\t"+str(s14)+"\t"+str(degrees(l))+"\t"+str(degrees(b))+"\n")
+		dist_sch.write(str(parral)+"\t"+ str(parrale) + "\t" + str(parrald)+ "\t "+ str(dlow)+"\t"+str(dlowe)+"\t"+str(dup)+"\t"+str(dupe)+"\t"+str(s14)+"\t"+str(degrees(l))+"\t"+str(degrees(b))+"\n")
 		
 	prmot_list.write(str(mu_l)+"\t"+str(mu_l_lerr)+"\t"+str(mu_l_rerr)+"\t"+str(mu_b)+"\t"+str(mu_b_lerr)+"\t"+str(mu_b_rerr)+"\n")
 
@@ -160,7 +160,11 @@ for i in range (0, num_lines):
 	if (parral == -1):
 		tex.write("  & * &  ")
 	else:
-		tex.write("  &  $" + str(parral) + "^{+" + str(parrale) + "}_{-" + str(parrald) + "}$  & ")
+		tex.write("  &  $" + str(parral))
+		if (parrale == parrald):
+			tex.write("\\pm "+ str(parrale)+"$ & ")
+		else:
+		        tex.write("^{+" + str(parrale) + "}_{-" + str(parrald) + "}$  & ")
 
 	if (dlow == -1):
 		tex.write("  *  &  ")

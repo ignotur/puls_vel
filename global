@@ -255,170 +255,324 @@ cp ../../brisken/skr_analysis_inside    $s
 done
 
 echo "We analyse data based on NE2001 electron denstity model" >>  start_${logname}.log
-echo "1D folder" >>  start_${logname}.log
 
+echo "NE2001 1D & fl catalogue." >>  start_${logname}.log
 cd parametric/NE2001/1D/fl/
 ./skr_analysis_inside 
+echo "NE2001 1D & fy catalogue." >>  ../../../../start_${logname}.log
 cd ../fy/
 ./skr_analysis_inside
+echo "NE2001 1D & yrs catalogue." >>  ../../../../start_${logname}.log
 cd ../yrs/
 ./skr_analysis_inside
+echo "NE2001 1D & yre catalogue." >>  ../../../../start_${logname}.log
 cd ../yre/
 ./skr_analysis_inside
+echo "NE2001 1D & yri catalogue." >>  ../../../../start_${logname}.log
 cd ../yri/
 ./skr_analysis_inside
 
-echo "1D joint folder" >>  start_${logname}.log
-
+echo "NE2001 1Dj & fl catalogue." >>  ../../../../start_${logname}.log
 cd ../../1D_joint/fl
-cp -r ../../1D/fl/profiles/ .
+cp -r ../../1D/fl/profiles .
 ./skr_analysis_inside
+echo "NE2001 1Dj & fy catalogue." >>  ../../../../start_${logname}.log
 cd ../fy
-cp -r ../../1D/fy/profiles/ .
+cp -r ../../1D/fy/profiles .
 ./skr_analysis_inside
+echo "NE2001 1Dj & yrs catalogue." >>  ../../../../start_${logname}.log
 cd ../yrs
-cp -r ../../1D/yrs/profiles/ .
+cp -r ../../1D/yrs/profiles .
 ./skr_analysis_inside
+echo "NE2001 1Dj & yre catalogue." >>  ../../../../start_${logname}.log
 cd ../yre
-cp -r ../../1D/yre/profiles/ .
+cp -r ../../1D/yre/profiles .
 ./skr_analysis_inside
+echo "NE2001 1Dj & yri catalogue." >>  ../../../../start_${logname}.log
 cd ../yri
-cp -r ../../1D/yri/profiles/ .
+cp -r ../../1D/yri/profiles .
 ./skr_analysis_inside
 
-echo "2D folder" >>  start_${logname}.log
-
+echo "NE2001 2D & fl catalogue." >>  ../../../../start_${logname}.log
 cd ../../2D/fl
 ./skr_analysis_inside 
+echo "NE2001 2D & fy catalogue." >>  ../../../../start_${logname}.log
 cd ../fy/
 ./skr_analysis_inside
+echo "NE2001 2D & yrs catalogue." >>  ../../../../start_${logname}.log
 cd ../yrs/
 ./skr_analysis_inside
+echo "NE2001 2D & yre catalogue." >>  ../../../../start_${logname}.log
 cd ../yre/
 ./skr_analysis_inside
+echo "NE2001 2D & yri catalogue." >>  ../../../../start_${logname}.log
 cd ../yri/
 ./skr_analysis_inside
 
-echo "We analyse data based on TC93 model" >>  start_${logname}.log
-echo "1D folder" >>  start_${logname}.log
-
+echo "We analyse data based on TC93 model" >>  ../../../../start_${logname}.log
+echo "TC93thick 1D & fl catalogue." >>  ../../../../start_${logname}.log
 cd ../../../TC93thick/1D/fl
+#cd parametric/TC93thick/1D/fl
 ./skr_analysis_inside 
+echo "TC93thick 1D & fy catalogue." >>  ../../../../start_${logname}.log
 cd ../fy/
 ./skr_analysis_inside
+echo "TC93thick 1D & yrs catalogue." >>  ../../../../start_${logname}.log
 cd ../yrs/
 ./skr_analysis_inside
+echo "TC93thick 1D & yre catalogue." >>  ../../../../start_${logname}.log
 cd ../yre/
 ./skr_analysis_inside
+echo "TC93thick 1D & yri catalogue." >>  ../../../../start_${logname}.log
 cd ../yri/
 ./skr_analysis_inside
 
-
-echo "1D joint folder" >>  start_${logname}.log
+echo "TC93thick 1Dj & fl catalogue." >>  ../../../../start_${logname}.log
 cd ../../1D_joint/fl
-cp -r ../../1D/fl/profiles/ .
+cp -r ../../1D/fl/profiles .
 ./skr_analysis_inside
+echo "TC93thick 1Dj & fy catalogue." >>  ../../../../start_${logname}.log
 cd ../fy
-cp -r ../../1D/fy/profiles/ .
+cp -r ../../1D/fy/profiles .
 ./skr_analysis_inside
+echo "TC93thick 1Dj & yrs catalogue." >>  ../../../../start_${logname}.log
 cd ../yrs
-cp -r ../../1D/yrs/profiles/ .
+cp -r ../../1D/yrs/profiles .
 ./skr_analysis_inside
+echo "TC93thick 1Dj & yre catalogue." >>  ../../../../start_${logname}.log
 cd ../yre
-cp -r ../../1D/yre/profiles/ .
+cp -r ../../1D/yre/profiles .
 ./skr_analysis_inside
+echo "TC93thick 1Dj & yri catalogue." >>  ../../../../start_${logname}.log
 cd ../yri
-cp -r ../../1D/yri/profiles/ .
+cp -r ../../1D/yri/profiles .
 ./skr_analysis_inside
 
-echo "2D folder" >>  start_${logname}.log
 
+echo "TC93thick 2D & fl catalogue." >>  ../../../../start_${logname}.log
 cd ../../2D/fl
-./skr_analysis_inside 
+./skr_analysis_inside
+echo "TC93thick 2D & fy catalogue." >>  ../../../../start_${logname}.log
 cd ../fy/
 ./skr_analysis_inside
+echo "TC93thick 2D & yrs catalogue." >>  ../../../../start_${logname}.log
 cd ../yrs/
 ./skr_analysis_inside
+echo "TC93thick 2D & yre catalogue." >>  ../../../../start_${logname}.log
 cd ../yre/
 ./skr_analysis_inside
+echo "TC93thick 2D & yri catalogue." >>  ../../../../start_${logname}.log
 cd ../yri/
 ./skr_analysis_inside
 
-echo "We have finished analysis in all catalogues." >>  start_${logname}.log
 
 cd ../../../../
 
-echo " fl " > table.tex
+echo "\\begin{table}"  > table.tex
+echo "\\caption{results}" >> table.tex
+echo "\\label{results}" >> table.tex
+echo "\\begin{tabular}{cccccc}" >> table.tex 
+
+echo " 1D/fl " >> table.tex
 cat parametric/NE2001/1D/fl/table.tex >> table.tex
-echo " fy " > table.tex
+echo " 1D/fy " >> table.tex
 cat parametric/NE2001/1D/fy/table.tex >> table.tex
-echo " yrs " > table.tex
+echo " 1D/yrs " >> table.tex
 cat parametric/NE2001/1D/yrs/table.tex >> table.tex
-echo " yre " > table.tex
+echo " 1D/yre " >> table.tex
 cat parametric/NE2001/1D/yre/table.tex >> table.tex
-echo " yri " > table.tex
+echo " 1D/yri " >> table.tex
 cat parametric/NE2001/1D/yri/table.tex >> table.tex
-echo "\hline"
+echo "\hline" >> table.tex
 
-echo " fl " > table.tex
+echo " 1Dj/fl " >> table.tex
 cat parametric/NE2001/1D_joint/fl/table.tex >> table.tex
-echo " fy " > table.tex
+echo " 1Dj/fy " >> table.tex
 cat parametric/NE2001/1D_joint/fy/table.tex >> table.tex
-echo " yrs " > table.tex
+echo " 1Dj/yrs " >> table.tex
 cat parametric/NE2001/1D_joint/yrs/table.tex >> table.tex
-echo " yre " > table.tex
+echo " 1Dj/yre " >> table.tex
 cat parametric/NE2001/1D_joint/yre/table.tex >> table.tex
-echo " yri " > table.tex
+echo " 1Dj/yri " >> table.tex
 cat parametric/NE2001/1D_joint/yri/table.tex >> table.tex
-echo "\hline"
+echo "\hline" >> table.tex
 
-echo " fl " > table.tex
+echo " 2D/fl " >> table.tex
 cat parametric/NE2001/2D/fl/table.tex >> table.tex
-echo " fy " > table.tex
+echo " 2D/fy " >> table.tex
 cat parametric/NE2001/2D/fy/table.tex >> table.tex
-echo " yrs " > table.tex
+echo " 2D/yrs " >> table.tex
 cat parametric/NE2001/2D/yrs/table.tex >> table.tex
-echo " yre " > table.tex
+echo " 2D/yre " >> table.tex
 cat parametric/NE2001/2D/yre/table.tex >> table.tex
-echo " yri " > table.tex
+echo " 2D/yri " >> table.tex
 cat parametric/NE2001/2D/yri/table.tex >> table.tex
-echo "\hline"
+echo "\hline" >> table.tex
 
 
-echo " fl " > table.tex
+echo " 1D/fl " >> table.tex
 cat parametric/TC93thick/1D/fl/table.tex >> table.tex
-echo " fy " > table.tex
+echo " 1D/fy " >> table.tex
 cat parametric/TC93thick/1D/fy/table.tex >> table.tex
-echo " yrs " > table.tex
+echo " 1D/yrs " >> table.tex
 cat parametric/TC93thick/1D/yrs/table.tex >> table.tex
-echo " yre " > table.tex
+echo " 1D/yre " >> table.tex
 cat parametric/TC93thick/1D/yre/table.tex >> table.tex
-echo " yri " > table.tex
+echo " 1D/yri " >> table.tex
 cat parametric/TC93thick/1D/yri/table.tex >> table.tex
-echo "\hline"
+echo "\hline" >> table.tex
 
-echo " fl " > table.tex
+echo " 1Dj/fl " >> table.tex
 cat parametric/TC93thick/1D_joint/fl/table.tex >> table.tex
-echo " fy " > table.tex
+echo " 1Dj/fy " >> table.tex
 cat parametric/TC93thick/1D_joint/fy/table.tex >> table.tex
-echo " yrs " > table.tex
+echo " 1Dj/yrs " >> table.tex
 cat parametric/TC93thick/1D_joint/yrs/table.tex >> table.tex
-echo " yre " > table.tex
+echo " 1Dj/yre " >> table.tex
 cat parametric/TC93thick/1D_joint/yre/table.tex >> table.tex
-echo " yri " > table.tex
+echo " 1Dj/yri " >> table.tex
 cat parametric/TC93thick/1D_joint/yri/table.tex >> table.tex
-echo "\hline"
+echo "\hline" >> table.tex
 
-echo " fl " > table.tex
+echo " 2D/fl " >> table.tex
 cat parametric/TC93thick/2D/fl/table.tex >> table.tex
-echo " fy " > table.tex
+echo " 2D/fy " >> table.tex
 cat parametric/TC93thick/2D/fy/table.tex >> table.tex
-echo " yrs " > table.tex
+echo " 2D/yrs " >> table.tex
 cat parametric/TC93thick/2D/yrs/table.tex >> table.tex
-echo " yre " > table.tex
+echo " 2D/yre " >> table.tex
 cat parametric/TC93thick/2D/yre/table.tex >> table.tex
-echo " yri " > table.tex
+echo " 2D/yri " >> table.tex
 cat parametric/TC93thick/2D/yri/table.tex >> table.tex
-echo "\hline"
+echo "\hline" >> table.tex
+
+echo "\\end{tabular}" >> table.tex
+echo "\\end{table}" >> table.tex
+
+
+cd non-parametric/NE2001/1D/fy/
+cp -r ../../../../parametric/NE2001/1D/fy/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/smooth_and_monotony.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/1D_to_cumul_distr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/skr_obr .
+./skr_obr
+
+cd ../yrs/
+cp -r ../../../../parametric/NE2001/1D/yrs/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/smooth_and_monotony.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/1D_to_cumul_distr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/skr_obr .
+./skr_obr
+
+cd ../../1D_joint/fy/
+cp -r ../../../../parametric/NE2001/1D_joint/fy/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/smooth_and_monotony.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/1D_to_cumul_distr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/skr_obr .
+./skr_obr
+
+cd ../yrs/
+cp -r ../../../../parametric/NE2001/1D_joint/yrs/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/smooth_and_monotony.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/1D_to_cumul_distr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/skr_obr .
+./skr_obr
+
+cd ../../2D/fy/
+cp -r ../../../../parametric/NE2001/2D/fy/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/r_*.txt .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/smooth.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/skr_obr .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/cross_corr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/bin_act.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/1D_to_cumul_distr.out .
+./skr_obr
+
+
+cd ../../2D/yrs/
+cp -r ../../../../parametric/NE2001/2D/yrs/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/r_*.txt .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/smooth.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/skr_obr .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/cross_corr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/bin_act.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/1D_to_cumul_distr.out .
+./skr_obr
+
+
+## No the same for TC93thick
+
+cd ../../../../
+
+cd non-parametric/TC93thick/1D/fy/
+cp -r ../../../../parametric/TC93thick/1D/fy/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/smooth_and_monotony.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/1D_to_cumul_distr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/skr_obr .
+./skr_obr
+
+cd ../yrs/
+cp -r ../../../../parametric/TC93thick/1D/yrs/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/smooth_and_monotony.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/1D_to_cumul_distr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/skr_obr .
+./skr_obr
+
+cd ../../1D_joint/fy/
+cp -r ../../../../parametric/TC93thick/1D_joint/fy/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/smooth_and_monotony.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/1D_to_cumul_distr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/skr_obr .
+./skr_obr
+
+cd ../yrs/
+cp -r ../../../../parametric/TC93thick/1D_joint/yrs/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/smooth_and_monotony.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/1D_to_cumul_distr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/1D/yrs/skr_obr .
+./skr_obr
+
+cd ../../2D/fy/
+cp -r ../../../../parametric/TC93thick/2D/fy/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/r_*.txt .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/smooth.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/skr_obr .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/cross_corr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/bin_act.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/1D_to_cumul_distr.out .
+./skr_obr
+
+
+cd ../../2D/yrs/
+cp -r ../../../../parametric/TC93thick/2D/fy/profiles .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/r_*.txt .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/sum_profile.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/smooth.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/skr_obr .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/cross_corr.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/bin_act.out .
+cp ../../../../../analysis_done_28052014/non-parametric/NE2001/2D/yrs/1D_to_cumul_distr.out .
+./skr_obr
+
+cd ../../
+
+cp ../../analysis_done_28052014/non-parametric/NE2001/*.gnu .
+
+cd ../NE2001/
+
+cp ../../analysis_done_28052014/non-parametric/NE2001/*.gnu .
+
+
 
 
