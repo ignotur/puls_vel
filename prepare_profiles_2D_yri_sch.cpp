@@ -297,7 +297,7 @@ double product_ecliptic(double *va,double *vb)
 // for differential rotation of the Galaxy
 //-------------------------------------------------
 
-double delta_vl (double * dist, double D)	{
+double delta_vl (double * dist, double D, bool is_vl)	{
 double res;
 double theta, R, R0, l, b;
 double sin_alpha, cos_alpha;
@@ -360,7 +360,10 @@ pmbrot=product_ecliptic(q,vgal);
 vsl = -product_ecliptic(p,vsun);
 vsb = -product_ecliptic(q,vsun); 
 
+if (is_vl)
 res = pmlrot+vsl;
+else
+res = pmbrot+vsb;
 
 return res;
 }
@@ -375,7 +378,7 @@ b = dist[9]/180.*pi;
 
 //res = abs(vl + delta_vl(dist, D))/(D)/9.51e5*206265. - abs(mu);
 
-res = abs(mu + delta_vl(dist, D)/D/9.51e5*206265.) - vl/D/9.51e5*206265.;
+res = abs(mu + delta_vl(dist, D, true)/D/9.51e5*206265.) - vl/D/9.51e5*206265.;
 
 return res;
 }
@@ -444,9 +447,9 @@ v_l = sign_v * v_l;
 
 	for (int i=1; i < 15000; i++)	{
 		D = (double) i * h;
-		lf = h * pdf_dist(entry_dist, D)         /D         * pdf_prmot( sqrt(pow(v_l + delta_vl(entry_dist, D), 2) + pow(v_b, 2))        / (D )      /dang2vel , mu_c, mu_s ); 
-		lc = h * pdf_dist(entry_dist, D + 0.5*h) /(D+0.5*h) * pdf_prmot( sqrt(pow(v_l + delta_vl(entry_dist, D + 0.5*h), 2) + pow (v_b,2))/((D+0.5*h))/dang2vel , mu_c, mu_s );
-		lr = h * pdf_dist(entry_dist, D + 1.0*h) /(D+1.0*h) * pdf_prmot( sqrt(pow(v_l + delta_vl(entry_dist, D + 1.0*h), 2) + pow (v_b,2))/((D+1.0*h))/dang2vel , mu_c, mu_s );
+		lf = h * pdf_dist(entry_dist, D)         /D         * pdf_prmot( sqrt(pow(v_l + delta_vl(entry_dist, D, true), 2)         + pow (v_b + delta_vl(entry_dist, D, false), 2))        / (D )      /dang2vel , mu_c, mu_s ); 
+		lc = h * pdf_dist(entry_dist, D + 0.5*h) /(D+0.5*h) * pdf_prmot( sqrt(pow(v_l + delta_vl(entry_dist, D + 0.5*h, true), 2) + pow (v_b + delta_vl(entry_dist, D+0.5*h, false),2))/((D+0.5*h))/dang2vel , mu_c, mu_s );
+		lr = h * pdf_dist(entry_dist, D + 1.0*h) /(D+1.0*h) * pdf_prmot( sqrt(pow(v_l + delta_vl(entry_dist, D + 1.0*h, true), 2) + pow (v_b + delta_vl(entry_dist, D+1.0*h, false),2))/((D+1.0*h))/dang2vel , mu_c, mu_s );
 		sum += (lf + 4 * lc + lr) / 6.;
 	}
 

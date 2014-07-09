@@ -6,7 +6,7 @@
 #include <sstream>
 
 
-extern "C" float dwod_ (int *, float*);
+//extern "C" float dwod_ (int *, float*);
 
 using namespace std;
 
@@ -79,7 +79,7 @@ float res;
 
 ifstream in;
 
-double static profile[200][2000];
+double static profile[400][2000];
 bool static flag = false;
 double entry_profile[2000], trash;
 double sigma_1, sigma_2, w;
@@ -181,7 +181,7 @@ cout<<"So, L is "<<log10(L)<<endl;
 if (L!=0.)
 res = log10(L);
 else
-res = -500;
+res = -900;
 
 return res;
 }

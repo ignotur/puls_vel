@@ -351,7 +351,9 @@ pmbrot=product_ecliptic(q,vgal);
 vsl = -product_ecliptic(p,vsun);
 vsb = -product_ecliptic(q,vsun); 
 
-res = pmlrot+vsl;
+//res = pmlrot+vsl;
+
+res = pmbrot+vsb;
 
 return res;
 }
@@ -429,9 +431,9 @@ vl = sign_v * vl;
 
 	for (int i=1; i < 15000; i++)	{
 		D = (double) i * h;
-		lf = h * pdf_dist(entry_dist, D)         /D         * pdf_prmot( (vl /*+ delta_vl(entry_dist, D)*/)        / (D )      /dang2vel , mu_c, mu_s ); 
-		lc = h * pdf_dist(entry_dist, D + 0.5*h) /(D+0.5*h) * pdf_prmot( (vl /*+ delta_vl(entry_dist, D + 0.5*h)*/)/((D+0.5*h))/dang2vel , mu_c, mu_s );
-		lr = h * pdf_dist(entry_dist, D + 1.0*h) /(D+1.0*h) * pdf_prmot( (vl /*+ delta_vl(entry_dist, D + 1.0*h)*/)/((D+1.0*h))/dang2vel , mu_c, mu_s );
+		lf = h * pdf_dist(entry_dist, D)         /D         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D )      /dang2vel , mu_c, mu_s ); 
+		lc = h * pdf_dist(entry_dist, D + 0.5*h) /(D+0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h))/dang2vel , mu_c, mu_s );
+		lr = h * pdf_dist(entry_dist, D + 1.0*h) /(D+1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h))/dang2vel , mu_c, mu_s );
 		sum += (lf + 4 * lc + lr) / 6.;
 	}
 

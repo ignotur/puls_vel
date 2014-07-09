@@ -1,11 +1,14 @@
 #include <iostream>
 #include <cmath>
+#include <fstream>
 
 float dwod_ (int * n, float * x); 
 
 using namespace std;
 
 int main (int argc, char * argv[]) {
+
+ofstream out ("model.dat", ios::app);
 
 long double h, sum, sum_l, sum_r;
 float val[3];
@@ -45,7 +48,7 @@ n=3;
 		val[0] = (v_max1 + i * h)/1000.;
 		sum_l += h * pow((long double) 10., dwod_(&n, &val[0]));
 		
-		if (abs(sum_l/sum - 0.3415) < 0.03)	{
+		if (abs(sum_l/sum - 0.3415) < 0.03 || abs(sum_l/sum) > 0.35)	{
 			cout << 1000*(val[0]-v_max1/1000.) << "\t" << sum <<"\t" << sum_l << "\t" << sum_l/sum <<endl;
 			break;
 		}
@@ -62,9 +65,9 @@ n=3;
 			exit(1);
 		}
 
-		cout << sum_r/sum << endl;
+		cout <<"========> "<<  sum_r/sum << endl;
 
-		if (abs(sum_r/sum - 0.3415) < 0.03)	{
+		if (abs(sum_r/sum - 0.3415) < 0.03 || abs(sum_r/sum) > 0.35)	{
 			cout << 1000*(v_max1/1000. - val[0]) << "\t" <<sum <<"\t" << sum_r << "\t" << sum_r/sum <<endl;
 			break;
 		}
@@ -95,7 +98,7 @@ sum_r = 0;
 		val[1] = (v_max2 + i * h)/1000.;
 		sum_l += h * pow((long double) 10., dwod_(&n, &val[0]));
 		
-		if (abs(sum_l/sum - 0.3415) < 0.03)	{
+		if (abs(sum_l/sum - 0.3415) < 0.03 || abs(sum_l/sum) > 0.35)	{
 			cout << 1000*(val[1]-v_max2/1000.) << "\t" << sum <<"\t" << sum_l << "\t" << sum_l/sum <<endl;
 			break;
 		}
@@ -109,10 +112,15 @@ sum_r = 0;
 		
 		if (val[1] < 0)	{
 			cout << "Alert! val < 0" << endl;
-			exit(1);
+	//		exit(1);
+			val[1]=0;
+			break;
 		}
 
-		if (abs(sum_r/sum - 0.3415) < 0.03)	{
+		cout <<"========> "<<  sum_r/sum << endl;
+
+
+		if (abs(sum_r/sum - 0.3415) < 0.03 || abs(sum_r/sum) > 0.35)	{
 			cout << 1000*(v_max2/1000. - val[1]) << "\t" <<sum <<"\t" << sum_r << "\t" << sum_r/sum <<endl;
 			break;
 		}
@@ -142,7 +150,7 @@ sum_r = 0;
 		val[2] = v_max3 + i * h/1000.;
 		sum_l += h * pow((long double) 10., dwod_(&n, &val[0]));
 		
-		if (abs(sum_l/sum - 0.3415) < 0.03)	{
+		if (abs(sum_l/sum - 0.3415) < 0.03 || abs(sum_l/sum) > 0.35)	{
 			cout << 1000*(val[2]-v_max3) << "\t" << sum <<"\t" << sum_l << "\t" << sum_l/sum <<endl;
 			break;
 		}
@@ -159,7 +167,7 @@ sum_r = 0;
 			exit(1);
 		}
 
-		if (abs(sum_r/sum - 0.3415) < 0.03)	{
+		if (abs(sum_r/sum - 0.3415) < 0.03 || abs(sum_r/sum) > 0.35)	{
 			cout << 1000*(v_max3 - val[2]) << "\t" <<sum <<"\t" << sum_r << "\t" << sum_r/sum <<endl;
 			break;
 		}
@@ -172,6 +180,10 @@ sum_r = 0;
 	cout << res_s2l  << "\t" << res_s2r << endl;
 	cout << res_s3l  << "\t" << res_s3r << endl;
 	cout << "----------- Summary ------------" << endl;
+
+	out << res_s1l  << "\t" << res_s1r << endl;
+	out << res_s2l  << "\t" << res_s2r << endl;
+	out << res_s3l  << "\t" << res_s3r << endl;
 
 return 0;
 }
