@@ -1,4 +1,4 @@
-#!/bin/bash/
+#!/bin/bash
 
 ##############################################
 ## The first step, we prepare timing file   ##
@@ -45,6 +45,11 @@ cat interfer_young_prmot.txt > fy_prmot.txt
 cat timing_young_prmot.txt  >> fy_prmot.txt
 cat interfer_young_prmot.txt > fy_sch_prmot.txt
 cat timing_young_prmot.txt  >> fy_sch_prmot.txt
+
+cp fy_dist.txt       yri_dist.txt
+cp fy_sch_dist.txt   yri_sch_dist.txt
+cp fy_prmot.txt      yri_prmot.txt
+cp fy_sch_prmot.txt  yri_sch_prmot.txt
  
 ####################################################################
 ## The fifth and seventh steps, we prepare yrs and yri catalogue  ##
@@ -53,10 +58,10 @@ cat interfer_young_dist.txt > yrs_dist.txt
 cat interfer_young_sch_dist.txt > yrs_sch_dist.txt
 cat interfer_young_prmot.txt > yrs_prmot.txt
 cat interfer_young_prmot.txt > yrs_sch_prmot.txt
-cat interfer_young_dist.txt > yri_dist.txt
-cat interfer_young_sch_dist.txt > yri_sch_dist.txt
-cat interfer_young_prmot.txt > yri_prmot.txt
-cat interfer_young_prmot.txt > yri_sch_prmot.txt
+#cat interfer_young_dist.txt > yri_dist.txt
+#cat interfer_young_sch_dist.txt > yri_sch_dist.txt
+#cat interfer_young_prmot.txt > yri_prmot.txt
+#cat interfer_young_prmot.txt > yri_sch_prmot.txt
 
 ###############################################
 ## The sixth step, we prepare yre catalogue  ##
