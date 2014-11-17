@@ -33,8 +33,8 @@ ifstream in_prmot (argc[2]);
 
 ofstream out_prof;
 
-double dist[10][1000], prmot[6][1000], res[2000];
-double entry_prmot[6], entry_dist[10]; 
+double dist[11][1000], prmot[6][1000], res[2000];
+double entry_prmot[6], entry_dist[11]; 
 int n_dist, n_prmot;
 n_dist  = 0;
 n_prmot = 0;
@@ -47,7 +47,7 @@ stringstream name;
 // Read all data (distance and proper motion)
 
 	do {
-		for (int i=0; i < 10; i++)
+		for (int i=0; i < 11; i++)
 			in_dist >> dist[i][n_dist];
 			//--------------------------------------------------------
 			// first value distance (dist[1] and dist[2] = -1)
@@ -80,7 +80,7 @@ n_prmot--;
 
 	for (int i=0; i < n_dist; i++)	{
 
-		for (int j=0; j < 10; j++)		
+		for (int j=0; j < 11; j++)		
 			entry_dist [j] = dist [j][i];
 		for (int j=0; j < 6; j++)	
 			entry_prmot[j] = prmot[j][i];	
@@ -137,30 +137,61 @@ double DM2, R, l, b;
 
 res = 1;
 
-	if 	(dist[1] != -1 && dist[2] != -1 && D > 1./dist[0])  
-		res = 1./pow(D,2.) * exp(-0.5 * pow(dist[0] - 1/D, 2) / pow (dist[1], 2));
-	else if (dist[1] != -1 && dist[2] != -1 && D < 1./dist[0])  
-		res = 1./pow(D,2.) * exp(-0.5 * pow(dist[0] - 1/D, 2) / pow (dist[2], 2));
-	else 
-		res = pdf_dist_fast (dist, D);
+	if 	(dist[2] != -1 && dist[3] != -1 && D > 1./dist[1])  
+		res = 1./pow(D,2.) * exp(-0.5 * pow(dist[1] - 1/D, 2) / pow (dist[2], 2));
+	else if (dist[2] != -1 && dist[3] != -1 && D < 1./dist[1])  
+		res = 1./pow(D,2.) * exp(-0.5 * pow(dist[1] - 1/D, 2) / pow (dist[3], 2));
+	
+	res *= pdf_dist_fast (dist, D);
 
-	if (dist[3] != -1 && dist[4] != -1 && dist[5] != -1 && dist[6] != -1) 
-		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4])) * 0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
-	else if (dist[3] != -1 && dist[4] != -1)
-		res *= 0.5 * (erf(dist[3] / sqrt(2) / dist[4]) - erf((dist[3] - D)/sqrt(2)/dist[4]));
-	else if (dist[5] != -1 && dist[6] != -1)
-		res *=  0.5 * (1. + erf((dist[5]-D)/sqrt(2)/dist[6])); 
+	if (res < 0)
+		exit(11);
 
-	l = dist[8] * pi/180.;
-	b = dist[9] * pi/180.;
+
+	if (dist[4] != -1 && dist[5] != -1 && dist[6] != -1 && dist[7] != -1) 
+		res *= 0.5 * (erf(dist[4] / sqrt(2) / dist[5]) - erf((dist[4] - D)/sqrt(2)/dist[5])) * 0.5 * (1. + erf((dist[6]-D)/sqrt(2)/dist[7])); 
+	else if (dist[4] != -1 && dist[5] != -1)
+		res *= 0.5 * (erf(dist[4] / sqrt(2) / dist[5]) - erf((dist[4] - D)/sqrt(2)/dist[5]));
+	else if (dist[6] != -1 && dist[7] != -1)
+		res *=  0.5 * (1. + erf((dist[6]-D)/sqrt(2)/dist[7])); 
+
+	l = dist[9] * pi/180.;
+	b = dist[10] * pi/180.;
+
+	if (res < 0)
+		exit(12);
 
 	R = sqrt(8.5*8.5 + pow(D*cos(b), 2) - 2*8.5*D*cos(b)*cos(l));
 
 	res *= pow(R/8.5, 1.9) * pow(D, 2) * exp(-abs(D*sin(b))/0.330 - 5*(R - 8.5)/8.5);
 
-	if (dist[7] != -1)
-		res *= 1./D * exp(-0.5*pow((log10(dist[7])+2*log10(D)+1.1)/0.9 ,2)); 
+	if (res < 0)
+		exit(13);
 
+
+	if (dist[8] != -1) {
+		res *= 1./D * exp(-0.5*pow((log10(dist[8])+2*log10(D)+1.1)/0.9 ,2)); 
+
+		/*
+                double lum_spec;
+                lum_spec = D*D*dist[8];
+                if (lum_spec > 0.1 && lum_spec <= 2.0) {
+                        res *= pow(lum_spec, -19./15.);
+                }
+                else if (lum_spec > 2.0) {
+                        res *= pow(lum_spec, -2.0);
+                }
+                else {
+                        res *= 0.;
+                }
+		*/
+	}
+
+	if (D < 0.05)
+		res *=0;
+
+	if (res < 0)
+		exit(14);
 
 
 	if (isnan(D) || isinf(D))	{
@@ -175,13 +206,14 @@ return res;
 
 double pdf_dist_fast (double * dist, double D) {
 double res, z;
-float DM1, DM2, dist1, dist2;
+float DM1, DM2, DM3, dist1, dist2;
 float sm, smtau, smtheta, smiso;
 char limit;
-double static dist_in_use [10];
+double static dist_in_use [11];
 double static pdf_at_dist [300];
+double static DM_dD [300]; 
 double intpart, fractpart;
-double probl, probr;
+double probl, probr, derr, derl;
 float l,b; 
 double Dcompar;
 int ndir;
@@ -196,15 +228,19 @@ z = 1.77;
 		else 				{
 			probl = pdf_at_dist[(int) intpart];
 			probr = pdf_at_dist[(int) intpart +1];
-			res = (1-fractpart) * probl + fractpart * probr;
+			derl = DM_dD[(int) intpart];
+			derr = DM_dD[(int) intpart + 1];
+			//derl = 1.0;
+			//derr = 1.0;
+			res = (1-fractpart) * probl * derl + fractpart * probr * derr;
 	//		res = probl;
 		}
 	}
 	else	{
 	cout<<"It is a different pulsar!"<<endl;	
 		copy(&dist_in_use[0], dist);
-		l = dist[8]/180.*pi;
-		b = dist[9]/180.*pi;
+		l = dist[9]/180.*pi;
+		b = dist[10]/180.*pi;
 
 		dist1 = dist[0];
 		Dcompar = abs(z / sin(b));
@@ -222,10 +258,21 @@ z = 1.77;
 			dmdsm_ (&l, &b, &ndir, &DM1, &dist1, &limit, &sm, &smtau, &smtheta);	
 			dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 	
-			sigma_DM = 0.4 * DM1;	
+			//sigma_DM = 0.4 * DM1;	
+			sigma_DM = 2.0 * sqrt(DM1);
 	
-			res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
-		
+
+			if (DM2 <= DM1)
+				res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
+			else
+				res = 0.0;
+	
+
+			dist2 = (i+1)*0.05;
+			dmdsm_ (&l, &b, &ndir, &DM3, &dist2, &limit, &sm, &smtau, &smtheta);
+			
+			DM_dD[i] = abs((DM3 - DM2) / (0.05));
+
 			if (i*0.05*cos(b)>15.)
 				res=0.;
 
@@ -238,9 +285,13 @@ z = 1.77;
 		dmdsm_ (&l, &b, &ndir, &DM2, &dist2, &limit, &sm, &smtau, &smtheta);
 //cout<< "Here" << endl;	
 
-		sigma_DM = 0.4 * DM1;
+		//sigma_DM = 0.4 * DM1;
+		sigma_DM = 2.0 * sqrt(DM1);
 
-		res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
+		if (DM2 <= DM1)
+			res = 1./(sigma_DM*sqrt(pi*2)) * exp (-pow(DM1 - DM2, 2)/(2.*pow(sigma_DM, 2.)));
+		else
+			res = 0.0;
 		
 		if (D*cos(b)>15.)
 			res=0.;
@@ -258,7 +309,7 @@ bool   compare       (double * a, double * b)	{
 bool flag;
 flag = true;
 
-	for (int i=0; i < 10; i++)	{	
+	for (int i=0; i < 11; i++)	{	
 		if (a[i] != b[i])
 			flag=false;
 	}
@@ -270,7 +321,7 @@ void   copy          (double * a, double * b) 	{
 
 cout<<"We start copying!"<<endl;
 
-	for (int i=0; i < 10; i++)	{		
+	for (int i=0; i < 11; i++)	{		
 		a[i] = b[i];
 		cout<<a[i]<<"\t"<<b[i]<<endl;
 	}
@@ -299,9 +350,9 @@ double sign_pec, v0gal;
 double vsun[4], b2000, l2000, vsl, vsb;
 double p[3], q[3], r[3], vgal[3], galcart[3];
 
-v0gal = 225;
+v0gal = 220;
 
-vsun[0]=9.2; vsun[1]=10.5; vsun[2]=6.9;
+vsun[0]=10.0; vsun[1]=5.3; vsun[2]=7.2;
 
 apex_l = 58.87/180.*pi;
 apex_b = 17.72/180.*pi;
@@ -310,8 +361,8 @@ R = 8.5;
 R0= 8.5;
 theta = 225; //225;
 
-l = dist[8]/180.*pi;
-b = dist[9]/180.*pi;
+l = dist[9]/180.*pi;
+b = dist[10]/180.*pi;
 
 l2000 = l;
 b2000 = b;
@@ -364,7 +415,7 @@ return res;
 double f(double * dist, double mu, double D, double vl)	{
 double res, b;
 
-b = dist[9]/180.*pi;
+b = dist[10]/180.*pi;
 
 //res = abs(vl + delta_vl(dist, D))/(D)/9.51e5*206265. - abs(mu);
 
@@ -412,6 +463,8 @@ double b, mu_c, mu_s, lf, lc, lr, D;
 double sign_v;
 double dang2vel;
 
+double del_vl;
+
 dang2vel = 4.610573776;
 
 sum = 0;
@@ -421,7 +474,7 @@ h   = 0.001;
 		cout<<"vl -- "<<vl<<endl;
 
 
-b = entry_dist[9] * pi / 180.;
+b = entry_dist[10] * pi / 180.;
 mu_c = entry_prmot[3];
 mu_s = entry_prmot[4];
 
@@ -431,9 +484,18 @@ vl = sign_v * vl;
 
 	for (int i=1; i < 15000; i++)	{
 		D = (double) i * h;
-		lf = h * pdf_dist(entry_dist, D)         /D         * pdf_prmot( (vl + delta_vl(entry_dist, D))        / (D )      /dang2vel , mu_c, mu_s ); 
-		lc = h * pdf_dist(entry_dist, D + 0.5*h) /(D+0.5*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 0.5*h))/((D+0.5*h))/dang2vel , mu_c, mu_s );
-		lr = h * pdf_dist(entry_dist, D + 1.0*h) /(D+1.0*h) * pdf_prmot( (vl + delta_vl(entry_dist, D + 1.0*h))/((D+1.0*h))/dang2vel , mu_c, mu_s );
+		del_vl = delta_vl (entry_dist, D);
+
+		if (pdf_dist(entry_dist, D) < 0.0) 	{
+			cout << "Some problem detected"<<endl;
+			exit(25);
+		}
+
+		lf = h * pdf_dist(entry_dist, D)         / D          * (pdf_prmot((vl + del_vl)/(D)/dang2vel, mu_c, mu_s) + pdf_prmot((-vl + del_vl)/(D)/dang2vel, mu_c, mu_s)); 
+		del_vl = delta_vl (entry_dist, D+0.5*h);
+		lc = h * pdf_dist(entry_dist, D + 0.5*h) / (D+0.5*h)  * (pdf_prmot((vl + del_vl)/(D+0.5*h)/dang2vel, mu_c, mu_s) + pdf_prmot((-vl + del_vl)/(D+0.5*h)/dang2vel , mu_c, mu_s));
+		del_vl = delta_vl (entry_dist, D+1.0*h);
+		lr = h * pdf_dist(entry_dist, D + 1.0*h) / (D+1.0*h)  * (pdf_prmot((vl + del_vl)/(D+1.0*h)/dang2vel, mu_c, mu_s) + pdf_prmot((-vl + del_vl)/(D+1.0*h)/dang2vel, mu_c, mu_s));
 		sum += (lf + 4 * lc + lr) / 6.;
 	}
 
